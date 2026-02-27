@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="BasicJava/src"/>
+	<classpathentry kind="src" path="OOPsLearning/src"/>
+	<classpathentry kind="lib" path="OOPsLearning/out/artifacts/OOPsLearning_jar/OOPsLearning.jar"/>
+	<classpathentry kind="output" path="BasicJava/out/production/Day1Learning"/>
+</classpath>
