@@ -35,7 +35,7 @@ public class TicTacToe {
     }
 
     public static void displayMenu() {
-        System.out.println("\n==== TIC TAC TOE ====");
+        System.out.println("\n==== TIC TAC TOE GAME ====");
         System.out.println("1. Human vs Human");
         System.out.println("2. Human vs Computer");
         System.out.println("3. Exit");

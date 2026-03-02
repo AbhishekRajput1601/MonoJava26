@@ -7,17 +7,19 @@ public class NestedService {
     public void execute() {
 
         Scanner scanner = new Scanner(System.in);
+        int[] numbers = new int[2];
 
         try {
-            System.out.print("Enter number to divide 10 by: ");
-            int number = Integer.parseInt(scanner.nextLine());
+            System.out.println("Enter numbers");
+            System.out.print("Enter first number : ");
+            int numberOne = Integer.parseInt(scanner.nextLine());
+            System.out.print("Enter second number : ");
+            int numberTwo = Integer.parseInt(scanner.nextLine());
 
-            int result = 10 / number;
+            int result = numberOne / numberTwo;
             System.out.println("Division Result: " + result);
 
             try {
-
-                int[] numbers = new int[2];
                 System.out.print("Enter index to access: ");
                 int index = Integer.parseInt(scanner.nextLine());
                 System.out.println(numbers[index]);
@@ -36,6 +38,8 @@ public class NestedService {
 
             System.out.println("Invalid numeric input.");
 
+        } finally {
+            scanner.close();
         }
     }
 }

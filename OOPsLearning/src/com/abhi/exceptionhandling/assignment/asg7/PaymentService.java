@@ -20,6 +20,8 @@ public class PaymentService {
 
         } catch (NullPointerException e) {
             throw new RuntimeException("Payment processing failed.", e);
+        } finally {
+            scanner.close();
         }
     }
 }

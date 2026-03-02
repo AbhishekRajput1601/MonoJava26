@@ -22,6 +22,8 @@ public class MarksService {
             System.out.println("Invalid marks input.");
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
+        }finally {
+            scanner.close();
         }
     }
 }

@@ -8,12 +8,13 @@ public class ArrayService {
 
         Scanner scanner = new Scanner(System.in);
         String[] names = new String[2];
+        names[0] = "Abhi";
 
         try {
 
             System.out.print("Enter index to access : ");
             int index = Integer.parseInt(scanner.nextLine());
-            System.out.println("Value: " + names[index].length());
+            System.out.println("length: " + names[index].length());
 
         } catch (ArrayIndexOutOfBoundsException e) {
 
@@ -27,6 +28,8 @@ public class ArrayService {
 
             System.out.println("Invalid index input.");
 
+        }finally {
+            scanner.close();
         }
     }
 }
