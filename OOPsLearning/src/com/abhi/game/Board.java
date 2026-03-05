@@ -1,67 +1,116 @@
 package com.abhi.game;
 
+import java.util.Arrays;
+
 public class Board {
 
     private char[] board;
+    private int size;
 
-    public Board() {
-        board = new char[9];
+    public Board(int size) {
+        this.size = size;
+        board = new char[size * size];
         initializeBoard();
     }
 
     public void initializeBoard() {
-        for (int i = 0; i < 9; i++) {
-            board[i] = ' ';
-        }
+        Arrays.fill(board, ' ');
     }
 
     public void displayBoard() {
         System.out.println();
-        System.out.println(" " + board[0] + " | " + board[1] + " | " + board[2]);
-        System.out.println("---|---|---");
-        System.out.println(" " + board[3] + " | " + board[4] + " | " + board[5]);
-        System.out.println("---|---|---");
-        System.out.println(" " + board[6] + " | " + board[7] + " | " + board[8]);
-        System.out.println();
+        for (int i = 0; i < board.length; i++) {
+
+            if (board[i] == ' ')
+                System.out.printf(" %2d ", i + 1);
+            else
+                System.out.printf(" %2c ", board[i]);
+
+            if ((i + 1) % size != 0)
+                System.out.print("|");
+
+            if ((i + 1) % size == 0 && i != board.length - 1) {
+                System.out.println();
+                for (int j = 0; j < size; j++)
+                    System.out.print("----");
+                System.out.println();
+            }
+        }
+        System.out.println("\n");
     }
 
     public void makeMove(int position, char symbol) {
 
-        if (position < 0 || position > 8) {
-            throw new IllegalArgumentException("INVALID_POSITION");
-        }
+        if (position < 0 || position >= board.length)
+            throw new IllegalArgumentException();
 
-        if (board[position] != ' ') {
-            throw new IllegalStateException("OCCUPIED_POSITION");
-        }
+        if (board[position] != ' ')
+            throw new IllegalStateException();
 
         board[position] = symbol;
     }
 
+    public void undoMove(int position) {
+        board[position] = ' ';
+    }
+
+    public boolean isEmpty(int position) {
+        return board[position] == ' ';
+    }
+
     public boolean hasWinner() {
 
-        int[][] winPositions = {
-                {0,1,2},{3,4,5},{6,7,8},
-                {0,3,6},{1,4,7},{2,5,8},
-                {0,4,8},{2,4,6}
-        };
+        for (int r = 0; r < size; r++) {
+            char first = board[r * size];
+            if (first == ' ') continue;
 
-        for (int[] pos : winPositions) {
-            if (board[pos[0]] != ' ' &&
-                    board[pos[0]] == board[pos[1]] &&
-                    board[pos[1]] == board[pos[2]]) {
-                return true;
-            }
+            boolean win = true;
+            for (int c = 1; c < size; c++)
+                if (board[r * size + c] != first) win = false;
+
+            if (win) return true;
+        }
+
+        for (int c = 0; c < size; c++) {
+            char first = board[c];
+            if (first == ' ') continue;
+
+            boolean win = true;
+            for (int r = 1; r < size; r++)
+                if (board[r * size + c] != first) win = false;
+
+            if (win) return true;
+        }
+
+        char first = board[0];
+        if (first != ' ') {
+            boolean win = true;
+            for (int i = 1; i < size; i++)
+                if (board[i * size + i] != first) win = false;
+
+            if (win) return true;
+        }
+
+        first = board[size - 1];
+        if (first != ' ') {
+            boolean win = true;
+            for (int i = 1; i < size; i++)
+                if (board[i * size + (size - i - 1)] != first) win = false;
+
+            if (win) return true;
         }
 
         return false;
     }
 
     public boolean isFull() {
-        for (char cell : board) {
-            if (cell == ' ')
+        for (char c : board)
+            if (c == ' ')
                 return false;
-        }
         return true;
+    }
+
+    public int getTotalCells() {
+        return board.length;
     }
 }

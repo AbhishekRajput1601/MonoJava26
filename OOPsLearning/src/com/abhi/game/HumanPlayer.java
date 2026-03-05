@@ -7,8 +7,8 @@ public class HumanPlayer extends Player {
 
     private Scanner scanner;
 
-    public HumanPlayer(char symbol) {
-        super(symbol);
+    public HumanPlayer(String name, char symbol) {
+        super(name, symbol);
         scanner = new Scanner(System.in);
     }
 
@@ -17,7 +17,7 @@ public class HumanPlayer extends Player {
 
         while (true) {
             try {
-                System.out.print("Player " + symbol + ", enter position (1-9): ");
+                System.out.print(name + " (" + symbol + ") choose position (1-" + board.getTotalCells() + "): ");
                 int position = scanner.nextInt() - 1;
 
                 board.makeMove(position, symbol);
@@ -28,10 +28,10 @@ public class HumanPlayer extends Player {
                 scanner.nextLine();
 
             } catch (IllegalArgumentException e) {
-                System.out.println("Invalid position! Choose between 1 and 9.");
+                System.out.println("Invalid position!");
 
             } catch (IllegalStateException e) {
-                System.out.println("Position already occupied! Try another.");
+                System.out.println("Position already occupied!");
             }
         }
     }

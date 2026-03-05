@@ -9,8 +9,8 @@ public class Game {
     private Player player1;
     private Player player2;
 
-    public Game(Player p1, Player p2) {
-        board = new Board();
+    public Game(Player p1, Player p2, int size) {
+        board = new Board(size);
         this.player1 = p1;
         this.player2 = p2;
     }
@@ -31,7 +31,7 @@ public class Game {
 
                 if (board.hasWinner()) {
                     board.displayBoard();
-                    System.out.println("Player " + currentPlayer.getSymbol() + " wins!");
+                    System.out.println(currentPlayer.getName() + " wins!");
                     return;
                 }
 
@@ -52,7 +52,7 @@ public class Game {
                             } else if (choice == 2) {
                                 return;
                             } else {
-                                System.out.println("Invalid choice! Enter 1 or 2.");
+                                System.out.println("Invalid choice!");
                             }
 
                         } catch (InputMismatchException e) {

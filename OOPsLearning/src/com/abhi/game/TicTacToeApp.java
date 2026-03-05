@@ -19,35 +19,53 @@ public class TicTacToeApp {
                 System.out.print("Select option: ");
 
                 int choice = scanner.nextInt();
+                scanner.nextLine();
 
-                switch (choice) {
+                if (choice == 3) {
+                    System.out.println("Thank you for playing!");
+                    System.exit(0);
+                }
 
-                    case 1:
-                        new Game(
-                                new HumanPlayer('X'),
-                                new HumanPlayer('O')
-                        ).start();
-                        break;
+                if (choice != 1 && choice != 2) {
+                    System.out.println("Invalid choice! Select between 1 and 3.");
+                    continue;
+                }
 
-                    case 2:
-                        new Game(
-                                new HumanPlayer('X'),
-                                new ComputerPlayer('O')
-                        ).start();
-                        break;
+                System.out.print("Enter board size (eg. 3 for 3x3 and 4 for 4x4) : ");
+                int size = scanner.nextInt();
+                scanner.nextLine();
 
-                    case 3:
-                        System.out.println("Thank you for playing!");
-                        System.exit(0);
+                if (choice == 1) {
 
-                    default:
-                        System.out.println("Invalid choice! Select between 1 and 3.");
+                    System.out.print("Enter Player 1 name: ");
+                    String p1 = scanner.nextLine();
+
+                    System.out.print("Enter Player 2 name: ");
+                    String p2 = scanner.nextLine();
+
+                    new Game(
+                            new HumanPlayer(p1, 'X'),
+                            new HumanPlayer(p2, 'O'),
+                            size
+                    ).start();
+
+                } else if (choice == 2) {
+
+                    System.out.print("Enter your name: ");
+                    String player = scanner.nextLine();
+
+                    new Game(
+                            new HumanPlayer(player, 'X'),
+                            new ComputerPlayer('O'),
+                            size
+                    ).start();
                 }
 
             } catch (InputMismatchException e) {
-                System.out.println("Invalid input! Please enter numbers only.");
+                System.out.println("Invalid input!");
                 scanner.nextLine();
             }
         }
     }
+
 }
