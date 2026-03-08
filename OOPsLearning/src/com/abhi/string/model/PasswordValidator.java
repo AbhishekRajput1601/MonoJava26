@@ -1,14 +1,8 @@
-package com.abhi.string;
-
-import java.util.Scanner;
+package com.abhi.string.model;
 
 public class PasswordValidator {
-    public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
-
-        System.out.print("Enter password: ");
-        String password = sc.nextLine();
+    public static void validatePassword(String password) {
 
         password = password.replace(" ", "");
 

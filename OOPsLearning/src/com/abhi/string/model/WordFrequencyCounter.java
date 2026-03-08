@@ -1,14 +1,8 @@
-package com.abhi.string;
-
-import java.util.Scanner;
+package com.abhi.string.model;
 
 public class WordFrequencyCounter {
-    public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
-
-        System.out.print("Enter sentence: ");
-        String sentence = sc.nextLine();
+    public static void countFrequency(String sentence) {
 
         sentence = sentence.toLowerCase();
 

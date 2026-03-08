@@ -1,14 +1,8 @@
-package com.abhi.string;
-
-import java.util.Scanner;
+package com.abhi.string.model;
 
 public class ProductCodeParser {
-    public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
-
-        System.out.print("Enter product code: ");
-        String code = sc.nextLine();
+    public static void parseCode(String code) {
 
         String[] parts = code.split("-");
 

@@ -1,14 +1,8 @@
-package com.abhi.string;
-
-import java.util.Scanner;
+package com.abhi.string.model;
 
 public class EmailAnalyzer {
-    public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
-
-        System.out.print("Enter email: ");
-        String email = sc.nextLine();
+    public static void analyzeEmail(String email) {
 
         email = email.trim();
 
@@ -20,10 +14,6 @@ public class EmailAnalyzer {
         int atIndex = email.indexOf("@");
         String username = email.substring(0, atIndex);
         String domain = email.substring(atIndex + 1);
-
-        boolean isGmail = domain.equalsIgnoreCase("gmail.com");
-
-        email = email.toLowerCase();
 
         int length = username.length();
 

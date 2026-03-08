@@ -1,14 +1,8 @@
-package com.abhi.string;
-
-import java.util.Scanner;
+package com.abhi.string.model;
 
 public class FileNameValidator {
-    public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
-
-        System.out.print("Enter file name: ");
-        String file = sc.nextLine();
+    public static void validateFile(String file) {
 
         boolean isPDF = file.endsWith(".pdf");
 
@@ -18,8 +12,6 @@ public class FileNameValidator {
         String name = file.substring(0, dotIndex);
 
         name = name.replace("_", " ");
-
-        String upperName = name.toUpperCase();
 
         boolean containsFinal = name.toLowerCase().contains("final");
 

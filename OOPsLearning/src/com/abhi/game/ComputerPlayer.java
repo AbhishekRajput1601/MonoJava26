@@ -45,14 +45,14 @@ public class ComputerPlayer extends Player {
                 board.makeMove(i, sym);
 
                 if (board.hasWinner()) {
+
                     board.undoMove(i);
+
                     return i;
                 }
-
                 board.undoMove(i);
             }
         }
-
         return -1;
     }
 }
