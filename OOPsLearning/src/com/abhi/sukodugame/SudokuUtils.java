@@ -13,7 +13,6 @@ class SudokuUtils {
             if (visited[num]) return false;
 
             visited[num] = true;
-
         }
 
         return true;
@@ -25,13 +24,13 @@ class SudokuUtils {
 
         for (int i = 0; i < 9; i++) {
 
-            if (i % 3 == 0) {
+            if (i % 3 == 0)
                 System.out.println("+-------+-------+-------+");
-            }
 
             for (int j = 0; j < 9; j++) {
 
-                if (j % 3 == 0) System.out.print("| ");
+                if (j % 3 == 0)
+                    System.out.print("| ");
 
                 if (grid[i][j] == 0)
                     System.out.print(". ");
@@ -44,5 +43,4 @@ class SudokuUtils {
 
         System.out.println("+-------+-------+-------+");
     }
-
 }

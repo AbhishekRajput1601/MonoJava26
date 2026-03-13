@@ -16,6 +16,11 @@ class SudokuGenerator {
             {3,4,5,2,8,6,1,7,9}
     };
 
+    public static int[][] generateBlankGrid() {
+
+        return new int[9][9];
+    }
+
     public static int[][] generatePuzzle(int difficulty) {
 
         int[][] puzzle = new int[9][9];
@@ -43,7 +48,6 @@ class SudokuGenerator {
 
                 puzzle[r][c] = 0;
                 blanks--;
-
             }
         }
 

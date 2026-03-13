@@ -9,14 +9,16 @@ class BoxValidator extends AbstractValidator {
             for (int col = 0; col < 9; col += 3) {
 
                 int[] box = new int[9];
-                int k = 0;
+                int index = 0;
 
-                for (int i = 0; i < 3; i++)
-                    for (int j = 0; j < 3; j++)
-                        box[k++] = grid[row + i][col + j];
+                for (int i = row; i < row + 3; i++)
+                    for (int j = col; j < col + 3; j++)
+                        box[index++] = grid[i][j];
 
                 if (!SudokuUtils.isValidSet(box)) {
-                    System.out.println("Duplicate in 3x3 box at (" + (row + 1) + "," + (col + 1) + ")");
+
+                    System.out.println("Duplicate detected in box starting at row "
+                            + (row + 1) + ", column " + (col + 1));
                     return false;
                 }
             }

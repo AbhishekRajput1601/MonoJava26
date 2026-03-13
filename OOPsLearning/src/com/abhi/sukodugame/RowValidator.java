@@ -8,11 +8,11 @@ class RowValidator extends AbstractValidator {
 
             int[] row = new int[9];
 
-            for (int j = 0; j < 9; j++) {
+            for (int j = 0; j < 9; j++)
                 row[j] = grid[i][j];
-            }
 
             if (!SudokuUtils.isValidSet(row)) {
+
                 System.out.println("Duplicate detected in row " + (i + 1));
                 return false;
             }

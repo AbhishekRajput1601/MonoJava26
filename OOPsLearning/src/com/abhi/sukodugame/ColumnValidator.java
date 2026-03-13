@@ -4,16 +4,16 @@ class ColumnValidator extends AbstractValidator {
 
     public boolean validate(int[][] grid) {
 
-        for (int col = 0; col < 9; col++) {
+        for (int i = 0; i < 9; i++) {
 
-            int[] column = new int[9];
+            int[] col = new int[9];
 
-            for (int row = 0; row < 9; row++) {
-                column[row] = grid[row][col];
-            }
+            for (int j = 0; j < 9; j++)
+                col[j] = grid[j][i];
 
-            if (!SudokuUtils.isValidSet(column)) {
-                System.out.println("Duplicate detected in column " + (col + 1));
+            if (!SudokuUtils.isValidSet(col)) {
+
+                System.out.println("Duplicate detected in column " + (i + 1));
                 return false;
             }
         }
