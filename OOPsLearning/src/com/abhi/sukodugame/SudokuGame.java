@@ -6,24 +6,6 @@ public class SudokuGame {
 
     static Scanner sc = new Scanner(System.in);
 
-    public static int getNumberInput(String msg) {
-
-        while (true) {
-
-            System.out.print(msg);
-
-            try {
-
-                return Integer.parseInt(sc.nextLine());
-
-            } catch (Exception e) {
-
-                System.out.println("Invalid input. Please enter a number.");
-
-            }
-        }
-    }
-
     public static void main(String[] args) {
 
         while (true) {
@@ -57,16 +39,16 @@ public class SudokuGame {
             }
 
             int[][] puzzle = SudokuGenerator.generatePuzzle(diff);
-
             SudokuUtils.printGrid(puzzle);
+
+            SudokuValidator validator = new SudokuValidator();
 
             while (true) {
 
                 System.out.println("\nEnter row column value (1-9)");
                 System.out.println("Example: 1 3 5");
-
+                System.out.print("Enter Your Number : ");
                 String input = sc.nextLine();
-
                 String[] parts = input.split(" ");
 
                 if (parts.length != 3) {
@@ -85,15 +67,26 @@ public class SudokuGame {
                         continue;
                     }
 
+
+                    if (puzzle[r][c] != 0) {
+                        System.out.println("Cell already filled. Choose another cell.");
+                        continue;
+                    }
+
                     puzzle[r][c] = v;
 
-                    SudokuUtils.printGrid(puzzle);
 
-                    SudokuValidator validator = new SudokuValidator();
+                    if (!validator.validate(puzzle)) {
 
-                    if (validator.validate(puzzle)) {
-                        System.out.println("Sudoku currently valid.");
+                        System.out.println("Invalid move! Duplicate detected.");
+                        puzzle[r][c] = 0;
+                        continue;
+
                     }
+
+                    System.out.println("Move accepted.");
+
+                    SudokuUtils.printGrid(puzzle);
 
                 } catch (Exception e) {
 
@@ -103,4 +96,16 @@ public class SudokuGame {
             }
         }
     }
+
+    public static int getNumberInput(String msg) {
+        while (true) {
+            System.out.print(msg);
+            try {
+                return Integer.parseInt(sc.nextLine());
+            } catch (Exception e) {
+                System.out.println("Invalid input. Please enter a number.");
+            }
+        }
+    }
 }
+

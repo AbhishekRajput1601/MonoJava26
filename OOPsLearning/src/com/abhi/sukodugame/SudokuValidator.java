@@ -8,8 +8,6 @@ class SudokuValidator {
         AbstractValidator col = new ColumnValidator();
         AbstractValidator box = new BoxValidator();
 
-        return row.validate(grid) &&
-                col.validate(grid) &&
-                box.validate(grid);
+        return row.validate(grid) && col.validate(grid) && box.validate(grid);
     }
 }
