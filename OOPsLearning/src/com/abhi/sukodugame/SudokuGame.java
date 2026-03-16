@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class SudokuGame {
 
-    static Scanner sc = new Scanner(System.in);
+    static Scanner scanner = new Scanner(System.in);
 
     public static int getNumberInput(String msg) {
 
@@ -13,7 +13,7 @@ public class SudokuGame {
             System.out.print(msg);
 
             try {
-                return Integer.parseInt(sc.nextLine());
+                return Integer.parseInt(scanner.nextLine());
             } catch (Exception e) {
                 System.out.println("Invalid input. Enter a number.");
             }

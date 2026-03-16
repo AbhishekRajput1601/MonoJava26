@@ -25,50 +25,73 @@ public class SudokuGameManager {
 
             SudokuUtils.printGrid(grid);
 
-            System.out.println("\nEnter row column value (1-9)");
-            System.out.println("Example: 1 3 5");
-            System.out.print("Enter Your Number : ");
-            String input = scanner.nextLine();
-            String[] parts = input.split(" ");
+            int r, c, v;
 
-            if (parts.length != 3) {
-                System.out.println("Invalid format.");
-                continue;
+            while (true) {
+                try {
+                    System.out.print("\nEnter Row (1-9): ");
+                    r = Integer.parseInt(scanner.nextLine()) - 1;
+
+                    if (r < 0 || r > 8) {
+                        System.out.println("Row must be between 1 and 9.");
+                        continue;
+                    }
+                    break;
+                } catch (Exception e) {
+                    System.out.println("Invalid row input.");
+                }
             }
 
-            try {
 
-                int r = Integer.parseInt(parts[0]) - 1;
-                int c = Integer.parseInt(parts[1]) - 1;
-                int v = Integer.parseInt(parts[2]);
+            while (true) {
+                try {
+                    System.out.print("Enter Column (1-9): ");
+                    c = Integer.parseInt(scanner.nextLine()) - 1;
 
-                if (r < 0 || r > 8 || c < 0 || c > 8 || v < 1 || v > 9) {
-                    System.out.println("Numbers must be between 1 and 9.");
-                    continue;
+                    if (c < 0 || c > 8) {
+                        System.out.println("Column must be between 1 and 9.");
+                        continue;
+                    }
+
+                    if (grid[r][c] != 0) {
+                        System.out.println("Cell already filled.");
+                        continue;
+                    }
+
+                    break;
+                } catch (Exception e) {
+                    System.out.println("Invalid column input.");
                 }
+            }
 
-                if (grid[r][c] != 0) {
-                    System.out.println("Cell already filled.");
-                    continue;
+
+            while (true) {
+                try {
+                    System.out.print("Enter Value (1-9): ");
+                    v = Integer.parseInt(scanner.nextLine());
+
+                    if (v < 1 || v > 9) {
+                        System.out.println("Value must be between 1 and 9.");
+                        continue;
+                    }
+                    break;
+
+                } catch (Exception e) {
+                    System.out.println("Invalid value input.");
                 }
+            }
 
-                grid[r][c] = v;
+            grid[r][c] = v;
 
-                if (!validator.validate(grid)) {
+            if (!validator.validate(grid)) {
 
-                    System.out.println("Invalid move! Duplicate detected.");
-                    grid[r][c] = 0;
-                }
-
-            } catch (Exception e) {
-
-                System.out.println("Invalid numbers.");
+                System.out.println("Invalid move! Duplicate detected.");
+                grid[r][c] = 0;
             }
 
             if (isGridFull(grid)) {
 
                 SudokuUtils.printGrid(grid);
-
                 System.out.println("\nSudoku Completed!");
 
                 showGameEndMenu();
