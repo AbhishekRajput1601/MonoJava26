@@ -6,20 +6,6 @@ public class SudokuGame {
 
     static Scanner scanner = new Scanner(System.in);
 
-    public static int getNumberInput(String msg) {
-
-        while (true) {
-
-            System.out.print(msg);
-
-            try {
-                return Integer.parseInt(scanner.nextLine());
-            } catch (Exception e) {
-                System.out.println("Invalid input. Enter a number.");
-            }
-        }
-    }
-
     public static void main(String[] args) {
 
         SudokuGameManager manager = new SudokuGameManager();
@@ -61,6 +47,20 @@ public class SudokuGame {
 
                 default:
                     System.out.println("Invalid option.");
+            }
+        }
+    }
+
+    public static int getNumberInput(String msg) {
+
+        while (true) {
+
+            System.out.print(msg);
+
+            try {
+                return Integer.parseInt(scanner.nextLine());
+            } catch (Exception e) {
+                System.out.println("Invalid input. Enter a number.");
             }
         }
     }
