@@ -76,7 +76,6 @@ class SudokuGenerator {
         Random random = new Random();
 
         int[][] solution = SOLUTIONS[random.nextInt(SOLUTIONS.length)];
-
         int[][] puzzle = new int[9][9];
 
         for (int i = 0; i < 9; i++)
