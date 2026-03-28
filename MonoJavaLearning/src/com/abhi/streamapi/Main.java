@@ -54,7 +54,7 @@ public class Main {
     public static void main(String[] args) {
 
         List<Integer> numbers = Arrays.asList(10, 15, 20, 25, 30, 35);
-        List<String> names = Arrays.asList("Aman", "Ravi", "Ankit", "Abhishek", "", "  ");
+        List<String> names = Arrays.asList("Aman", "Ravi", "Ankit", "Abhishek");
         List<Student> students = Arrays.asList(
                 new Student("Aman", 70),
                 new Student("Ravi", 30),

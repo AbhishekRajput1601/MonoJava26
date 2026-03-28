@@ -73,9 +73,9 @@ class SudokuGenerator {
 
     public static int[][] generatePuzzle(int difficulty) {
 
-        Random rand = new Random();
+        Random random = new Random();
 
-        int[][] solution = SOLUTIONS[rand.nextInt(SOLUTIONS.length)];
+        int[][] solution = SOLUTIONS[random.nextInt(SOLUTIONS.length)];
 
         int[][] puzzle = new int[9][9];
 
@@ -93,8 +93,8 @@ class SudokuGenerator {
 
         while (blanks > 0) {
 
-            int r = rand.nextInt(9);
-            int c = rand.nextInt(9);
+            int r = random.nextInt(9);
+            int c = random.nextInt(9);
 
             if (puzzle[r][c] != 0) {
                 puzzle[r][c] = 0;
