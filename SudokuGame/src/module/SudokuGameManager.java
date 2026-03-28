@@ -28,47 +28,93 @@ public class SudokuGameManager {
             int r, c, v;
 
             while (true) {
+
                 System.out.print("\nEnter Row (1-9 or -1 to exit): ");
-                r = Integer.parseInt(scanner.nextLine());
-                if (r == -1) return;
-                r--;
+                String input = scanner.nextLine().trim();
 
-                if (r < 0 || r > 8) {
-                    System.out.println("Row must be between 1 and 9.");
+                if (input.isEmpty()) {
+                    System.out.println("Input cannot be empty.");
                     continue;
                 }
-                break;
+
+                try {
+                    r = Integer.parseInt(input);
+
+                    if (r == -1) return;
+
+                    r--;
+
+                    if (r < 0 || r > 8) {
+                        System.out.println("Row must be between 1 and 9.");
+                        continue;
+                    }
+
+                    break;
+
+                } catch (Exception e) {
+                    System.out.println("Invalid row input.");
+                }
             }
 
             while (true) {
+
                 System.out.print("Enter Column (1-9 or -1 to exit): ");
-                c = Integer.parseInt(scanner.nextLine());
-                if (c == -1) return;
-                c--;
+                String input = scanner.nextLine().trim();
 
-                if (c < 0 || c > 8) {
-                    System.out.println("Column must be between 1 and 9.");
+                if (input.isEmpty()) {
+                    System.out.println("Input cannot be empty.");
                     continue;
                 }
 
-                if (grid[r][c] != 0) {
-                    System.out.println("Cell already filled. Choose another cell.");
-                    continue;
-                }
+                try {
+                    c = Integer.parseInt(input);
 
-                break;
+                    if (c == -1) return;
+
+                    c--;
+
+                    if (c < 0 || c > 8) {
+                        System.out.println("Column must be between 1 and 9.");
+                        continue;
+                    }
+
+                    if (grid[r][c] != 0) {
+                        System.out.println("Cell already filled. Choose another cell.");
+                        continue;
+                    }
+
+                    break;
+
+                } catch (Exception e) {
+                    System.out.println("Invalid column input.");
+                }
             }
 
             while (true) {
-                System.out.print("Enter Value (1-9 or -1 to exit): ");
-                v = Integer.parseInt(scanner.nextLine());
-                if (v == -1) return;
 
-                if (v < 1 || v > 9) {
-                    System.out.println("Value must be between 1 and 9.");
+                System.out.print("Enter Value (1-9 or -1 to exit): ");
+                String input = scanner.nextLine().trim();
+
+                if (input.isEmpty()) {
+                    System.out.println("Input cannot be empty.");
                     continue;
                 }
-                break;
+
+                try {
+                    v = Integer.parseInt(input);
+
+                    if (v == -1) return;
+
+                    if (v < 1 || v > 9) {
+                        System.out.println("Value must be between 1 and 9.");
+                        continue;
+                    }
+
+                    break;
+
+                } catch (Exception e) {
+                    System.out.println("Invalid value input.");
+                }
             }
 
             grid[r][c] = v;
@@ -105,23 +151,35 @@ public class SudokuGameManager {
             System.out.println("2. Back to Menu");
             System.out.println("3. Exit");
 
-            int choice = Integer.parseInt(scanner.nextLine());
+            String input = scanner.nextLine().trim();
 
-            switch (choice) {
+            if (input.isEmpty()) {
+                System.out.println("Input cannot be empty.");
+                continue;
+            }
 
-                case 1:
-                    playBlankGame();
-                    return;
+            try {
+                int choice = Integer.parseInt(input);
 
-                case 2:
-                    return;
+                switch (choice) {
 
-                case 3:
-                    System.out.println("Thank you for playing.");
-                    System.exit(0);
+                    case 1:
+                        playBlankGame();
+                        return;
 
-                default:
-                    System.out.println("Invalid option.");
+                    case 2:
+                        return;
+
+                    case 3:
+                        System.out.println("Thank you for playing.");
+                        System.exit(0);
+
+                    default:
+                        System.out.println("Invalid option.");
+                }
+
+            } catch (Exception e) {
+                System.out.println("Invalid input.");
             }
         }
     }
