@@ -3,7 +3,7 @@ package model.modelservices;
 
 import model.notificationmodel.Notifier;
 import model.productmodel.Product;
-import model.validationmodel.ProductNotFoundException;
+import model.validationmodel.InvalidInputException;
 import model.valuationmodel.ValuationStrategy;
 
 import java.util.*;
@@ -37,19 +37,17 @@ public class InventoryService {
     public void addStock(String name, int qty) {
         Product p = getExistingProduct(name);
         p.addStock(qty);
-        System.out.println("Stock added");
     }
 
-    public void removeStock(String name, int qty) {
-        Product p = getExistingProduct(name);
-
-        if (qty > p.getQuantity()) {
-            throw new RuntimeException("Not enough stock");
+    public void removeStock(String name, int quantity) {
+        Product product = getExistingProduct(name);
+        if (quantity > product.getQuantity()) {
+            throw new InvalidInputException("Not enough stock for product: " + name);
         }
 
-        p.removeStock(qty);
-        System.out.println("Stock removed");
-        checkReorder(p);
+        product.removeStock(quantity);
+        System.out.println("Stock removed successfully.");
+        checkReorder(product);
     }
 
     public void updateQuantity(String name, int qty) {
@@ -74,8 +72,11 @@ public class InventoryService {
 
     private void checkReorder(Product product) {
         if (product.getQuantity() <= product.getReorderLevel()) {
+            System.out.println("Reorder level reached for product: " + product.getName());
             reorderService.reorder(product);
-            notifiers.forEach(n -> n.notify("Low stock: " + product.getName()));
+            notifiers.forEach(notifier ->
+                    notifier.notify("Low Quantity in stock of : " + product.getName())
+            );
         }
     }
 

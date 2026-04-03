@@ -143,6 +143,5 @@ public class InventoryMenu {
 
         int quantityToRemove = InputValidator.readInt(scanner, "Enter Quantity to Remove: ");
         inventoryService.removeStock(productName, quantityToRemove);
-        System.out.println("Stock removed successfully.");
     }
 }

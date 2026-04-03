@@ -8,11 +8,6 @@ import java.util.Optional;
 
 public class ProductService {
 
-    public Optional<Product> findProduct(List<Product> products, String name) {
-        return products.stream()
-                .filter(p -> p.getName().equalsIgnoreCase(name))
-                .findFirst();
-    }
     public Product getExistingProduct(List<Product> products, String name) {
         return products.stream()
                 .filter(p -> p.getName().equalsIgnoreCase(name))
