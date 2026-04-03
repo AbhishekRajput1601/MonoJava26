@@ -1,6 +1,8 @@
 package solid.assignment.asg1.model.modelservice;
 
 import solid.assignment.asg1.model.NotificationModel.Notifier;
+import solid.assignment.asg1.model.ValuationModel.FIFOValuation;
+import solid.assignment.asg1.model.ValuationModel.LIFOValuation;
 import solid.assignment.asg1.model.ValuationModel.ValuationStrategy;
 
 import java.util.*;
@@ -9,14 +11,12 @@ public class InventoryService {
     private final List<Product> products = new ArrayList<>();
     private final List<Notifier> notifiers;
     private final ReorderService reorderService;
-    private final ValuationStrategy valuationStrategy;
 
     public InventoryService(List<Notifier> notifiers,
                             ReorderService reorderService,
                             ValuationStrategy valuationStrategy) {
         this.notifiers = notifiers;
         this.reorderService = reorderService;
-        this.valuationStrategy = valuationStrategy;
     }
 
     public void addProduct(Product product) {
@@ -24,21 +24,57 @@ public class InventoryService {
     }
 
     public void removeStock(String productName, int qty) {
-        for (Product p : products) {
-            if (p.getName().equals(productName)) {
-                p.removeStock(qty);
-                System.out.println("Stock updated: Removed " + qty + " units of '" + productName + "'");
-                System.out.println("Current stock for " + productName + ": " + p.getQuantity());
+        Product p = findProduct(productName);
 
-                checkReorder(p);
-                return;
+        if (p == null) {
+            System.out.println("Product not found.");
+            return;
+        }
+
+        p.removeStock(qty);
+
+        System.out.println("Stock updated: Removed " + qty + " units of '" + productName + "'");
+        System.out.println("Current stock for " + productName + ": " + p.getQuantity());
+
+        checkReorder(p);
+    }
+
+
+    public void deleteProduct(String productName) {
+        Product p = findProduct(productName);
+
+        if (p != null) {
+            products.remove(p);
+            System.out.println("Product deleted successfully.");
+        } else {
+            System.out.println("Product not found.");
+        }
+    }
+
+
+    public void updateProduct(String productName, int qty, int reorderLevel, double price) {
+        Product p = findProduct(productName);
+
+        if (p != null) {
+            p.updateProduct(qty, reorderLevel, price);
+            System.out.println("Product updated successfully.");
+        } else {
+            System.out.println("Product not found.");
+        }
+    }
+
+    private Product findProduct(String name) {
+        for (Product p : products) {
+            if (p.getName().equalsIgnoreCase(name)) {
+                return p;
             }
         }
+        return null;
     }
 
     private void checkReorder(Product product) {
         if (product.getQuantity() <= product.getReorderLevel()) {
-            System.out.println("Reorder threshold reached for '" + product.getName() + "'. Triggering reorder...");
+            System.out.println("Reorder threshold reached for '" + product.getName() + "'.");
 
             reorderService.reorder(product);
 
@@ -48,9 +84,34 @@ public class InventoryService {
         }
     }
 
+
     public void calculateInventoryValue() {
-        double value = valuationStrategy.calculateValue(products);
-        System.out.println("Total inventory value: $" + value);
+        double total = 0;
+
+        ValuationStrategy fifo = new FIFOValuation();
+        ValuationStrategy lifo = new LIFOValuation();
+
+        List<Product> perishable = new ArrayList<>();
+        List<Product> nonPerishable = new ArrayList<>();
+
+        for (Product p : products) {
+            if (p.isPerishable()) {
+                perishable.add(p);
+            } else {
+                nonPerishable.add(p);
+            }
+        }
+
+        double fifoValue = fifo.calculateValue(perishable);
+        double lifoValue = lifo.calculateValue(nonPerishable);
+
+        total = fifoValue + lifoValue;
+
+        System.out.println("\n----- Inventory Valuation -----");
+        System.out.println("Perishable Products (FIFO): $" + fifoValue);
+        System.out.println("Non-Perishable Products (LIFO): $" + lifoValue);
+        System.out.println("--------------------------------");
+        System.out.println("Total inventory value: $" + total);
     }
 
     public void showAllProducts() {
@@ -59,12 +120,24 @@ public class InventoryService {
             return;
         }
 
-        System.out.println("\nName\tQuantity\tReorderLevel\tPrice");
+        System.out.println("\n-------------------------------------------------------------");
+        System.out.printf("%-10s %-10s %-10s %-10s %-10s\n",
+                "Name", "Qty", "Reorder", "Price", "Perishable");
+        System.out.println("-------------------------------------------------------------");
 
         for (Product p : products) {
-            System.out.println(
-                    p.getName() + "\t" + p.getQuantity() + "\t\t" + p.getReorderLevel() + "\t\t" + p.getPrice()
-            );
+            System.out.printf("%-10s %-10s %-10s %-10s %-10s\n",
+                    p.getName(),
+                    p.getQuantity(),
+                    p.getReorderLevel(),
+                    p.getPrice(),
+                    p.isPerishable());
         }
+
+        System.out.println("-------------------------------------------------------------");
+    }
+
+    public boolean productExists(String name) {
+        return findProduct(name) != null;
     }
 }

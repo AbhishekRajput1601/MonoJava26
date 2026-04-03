@@ -1,19 +1,20 @@
-package solid.assignment.asg1.model.modelservice;
+package model.productmodel;
 
-public class Product {
+public abstract class Product {
+
     private String name;
     private int quantity;
     private int reorderLevel;
     private double price;
-    private boolean perishable;
 
-    public Product(String name, int quantity, int reorderLevel, double price, boolean perishable) {
+    public Product(String name, int quantity, int reorderLevel, double price) {
         this.name = name;
         this.quantity = quantity;
         this.reorderLevel = reorderLevel;
         this.price = price;
-        this.perishable = perishable;
     }
+
+    public abstract boolean isPerishable();
 
     public String getName() {
         return name;
@@ -31,10 +32,6 @@ public class Product {
         return price;
     }
 
-    public boolean isPerishable() {
-        return perishable;
-    }
-
     public void addStock(int qty) {
         this.quantity += qty;
     }
@@ -43,18 +40,13 @@ public class Product {
         this.quantity -= qty;
     }
 
-    // NEW METHOD
     public void updateProduct(int quantity, int reorderLevel, double price) {
         this.quantity = quantity;
         this.reorderLevel = reorderLevel;
         this.price = price;
     }
 
-    @Override
     public String toString() {
-        return "Product{name='" + this.name + "', quantity=" + this.quantity +
-                ", reorderLevel=" + this.reorderLevel +
-                ", price=" + this.price +
-                ", perishable=" + this.perishable + "}";
+        return name + " | Qty: " + quantity + " | Reorder: " + reorderLevel + " | Price: " + price;
     }
 }
