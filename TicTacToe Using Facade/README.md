@@ -349,7 +349,7 @@ That is exactly the kind of design the Facade pattern is meant to support.
 
 ---
 
-## 🧱 Design Pattern: Facade
+##  Design Pattern: Facade
 
 The **Facade Design Pattern** is the main design pattern used in this project.
 
@@ -456,7 +456,7 @@ This design is a strong fit for a small game because it keeps things simple with
 
 ---
 
-## ✨ User Experience
+##  User Experience
 
 This project is meant to feel interactive and friendly.
 
