@@ -1,16 +1,16 @@
-# 🎮 Tic-tac-toe Using Facade
+#  Tic-tac-toe Using Facade
 
 A beginner-friendly Java console game that uses the **Facade Design Pattern** to keep the application simple to start, easy to understand, and easy to maintain. The game supports:
 
-- 👤 Human vs Human
-- 🤖 Human vs Computer
-- 🧩 Different board sizes
+-  Human vs Human
+-  Human vs Computer
+-  Different board sizes
 
 This project is a great example of how a small game can still be organized in a clean, professional way using object-oriented design.
 
 ---
 
-## 📌 Project Overview
+##  Project Overview
 
 The main purpose of this project is to show how a game can be split into small, focused parts instead of putting everything into one large class.
 
@@ -27,7 +27,7 @@ That separation makes the project easier to read, easier to test, and easier to 
 
 ---
 
-## 🚀 How It Works
+##  How It Works
 
 Here is the high-level flow of the application:
 
@@ -43,7 +43,7 @@ This flow keeps the user experience simple and interactive while the internal cl
 
 ---
 
-## 🗂️ Project Components
+##  Project Components
 
 Below is a simple breakdown of the main parts of the project and what each one does.
 
@@ -223,7 +223,7 @@ Below is a simple breakdown of the main parts of the project and what each one d
 
 ---
 
-## 🖼️ Class Diagram
+##  Class Diagram
 
 The diagram below is embedded directly in the README using Mermaid, so no separate image file is required.
 
@@ -382,7 +382,7 @@ With the facade in place:
 
 ---
 
-## 🧭 SOLID Principles
+##  SOLID Principles
 
 This project also follows the **SOLID principles**, which help keep the code clean and flexible.
 
@@ -442,7 +442,7 @@ SOLID and Facade work well together in this project because:
 
 ---
 
-## 🔄 Why This Design Works Well
+##  Why This Design Works Well
 
 This design is a strong fit for a small game because it keeps things simple without making the code messy.
 
@@ -473,7 +473,7 @@ If something invalid is entered, the application responds with a helpful message
 
 ---
 
-## 📚 Summary
+##  Summary
 
 This Tic-tac-toe project is a great example of how to build a simple game with a clean architecture.
 
