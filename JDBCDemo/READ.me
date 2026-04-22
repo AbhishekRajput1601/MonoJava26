@@ -1,0 +1,132 @@
+---
+
+# JDBC Code Explanation
+
+This section explains how the JDBC code connects to a MySQL database, executes a query, and processes the results.
+
+---
+
+## 1. Importing Required Packages
+
+```java
+import java.sql.*;
+```
+
+This imports all necessary JDBC classes such as:
+
+* `Connection`
+* `Statement`
+* `ResultSet`
+
+---
+
+## 2. Defining Connection Details
+
+```java
+String url = "jdbc:mysql://localhost:3306/jdbcdemo";
+String username = "root";
+String password = "";
+```
+
+* **URL Breakdown:**
+
+  * `jdbc:mysql://` → JDBC protocol for MySQL
+  * `localhost:3306` → Database server & port
+  * `jdbcdemo` → Database name
+
+* **Credentials:**
+
+  * `username` → Database username
+  * `password` → Database password
+
+---
+
+## 3. Loading the JDBC Driver
+
+```java
+Class.forName("com.mysql.cj.jdbc.Driver");
+```
+
+* Loads the MySQL JDBC driver.
+* In newer Java versions, this step is optional (auto-loading supported).
+
+---
+
+## 4. Establishing a Connection
+
+```java
+Connection connection = DriverManager.getConnection(url, username, password);
+```
+
+* Creates a connection to the database using provided credentials.
+
+---
+
+## 5. Creating a Statement
+
+```java
+Statement statement = connection.createStatement();
+```
+
+* Used to execute SQL queries.
+
+---
+
+## 6. Executing the Query
+
+```java
+ResultSet resultSet = statement.executeQuery("SELECT * FROM student");
+```
+
+* Executes the SQL query.
+* Stores the result in a `ResultSet`.
+
+---
+
+## 7. Processing the Result
+
+```java
+while (resultSet.next()) {
+    System.out.println(
+        resultSet.getInt(1) + " " +
+        resultSet.getString(2) + " " +
+        resultSet.getInt(3)
+    );
+}
+```
+
+* `resultSet.next()` → Moves row by row
+* Retrieves column values:
+
+  * Column 1 → Integer
+  * Column 2 → String
+  * Column 3 → Integer
+
+---
+
+## 8. Closing the Connection
+
+```java
+connection.close();
+```
+
+* Releases database resources.
+* Always close connections to avoid leaks.
+
+---
+
+## 9. Error Handling
+
+```java
+catch (Exception e) {
+    System.out.println(e);
+}
+```
+
+* Handles runtime errors like:
+
+  * Connection issues
+  * SQL syntax errors
+
+---
+
