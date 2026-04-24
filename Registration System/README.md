@@ -74,238 +74,178 @@ INSERT INTO course (course_name) VALUES ('Java'), ('Python'), ('Data Science')
   ON DUPLICATE KEY UPDATE course_name = course_name;
 ```
 
-How to build & run (local)
---------------------------
-1. Ensure JDK is installed and `javac`/`java` are on PATH.
-2. Add MySQL JDBC connector JAR to your classpath when running.
-3. Compile:
 
-```powershell
-# from project root (Windows PowerShell)
-New-Item -ItemType Directory -Force -Path out | Out-Null
-Get-ChildItem -Path "src" -Recurse -Filter *.java | ForEach-Object { $_.FullName } | %{ & javac -d out $_ }
+Mermaid diagrams
+----------------
+You can also view the diagrams using Mermaid. Paste the blocks below into https://mermaid.live/ or a Mermaid-enabled README viewer.
+
+Class diagram (Mermaid):
+
+```mermaid
+classDiagram
+    %% Models
+    class StudentModel {
+      - int studentId
+      - String studentName
+      - int studentAge
+      - String studentBranch
+      + StudentModel(int,String,int,String)
+      + getStudentId() int
+      + getStudentName() String
+      + getStudentAge() int
+      + getStudentBranch() String
+    }
+
+    class RegistrationModel {
+      - int registrationId
+      - int studentId
+      - int courseId
+      - String courseName
+      - double feesPaid
+      + RegistrationModel(int,int,int,String,double)
+      + getRegId() int
+      + getStudentId() int
+      + getCourseId() int
+      + getCourseName() String
+      + getFeesPaid() double
+    }
+
+    class CourseModel {
+      - int courseId
+      - String courseName
+      + CourseModel(int,String)
+      + getCourseId() int
+      + getCourseName() String
+    }
+
+    class BranchModel {
+      - int branchId
+      - String branchName
+      + BranchModel(int,String)
+      + getBranchId() int
+      + getBranchName() String
+    }
+
+    %% DAOs
+    class StudentDataAccessObject {
+      + insertStudent(Connection,StudentModel) boolean
+      + isStudentExists(Connection,int) boolean
+      + findStudentById(Connection,int) Optional~StudentModel~
+      + updateStudentDetails(Connection,int,String,String) int
+      + deleteStudentById(Connection,int) int
+    }
+
+    class RegistrationDataAccessObject {
+      + isDuplicateRegistration(Connection,int,int) boolean
+      + insertRegistration(Connection,int,int,double) boolean
+      + updateCourseFee(Connection,int,int,double) int
+      + deleteRegistration(Connection,int,int) int
+      + findRegistrationsByStudentId(Connection,int) List~RegistrationModel~
+      + fetchAllStudentsWithRegistrations(Connection) List~String~
+      + fetchAllCourses(Connection) List~CourseModel~
+    }
+
+    class CourseDataAccessObject {
+      + insertCourse(Connection,String) boolean
+      + isCourseExists(Connection,String) boolean
+      + updateCourseName(Connection,int,String) boolean
+      + deleteCourseById(Connection,int) boolean
+      + fetchAllCourses(Connection) List~CourseModel~
+    }
+
+    class BranchDataAccessObject {
+      + insertBranch(Connection,String) boolean
+      + isBranchExists(Connection,String) boolean
+      + updateBranchName(Connection,int,String) boolean
+      + deleteBranchById(Connection,int) boolean
+      + fetchAllBranches(Connection) List~BranchModel~
+    }
+
+    %% Service & Util & App
+    class StudentServiceLayer {
+      - StudentDataAccessObject studentDAO
+      - RegistrationDataAccessObject registrationDAO
+      - CourseDataAccessObject courseDAO
+      - BranchDataAccessObject branchDAO
+      + addNewStudent(StudentModel)
+      + registerStudentForCourse(int,int,double)
+      + deleteStudentCompletely(int)
+      + updateStudentDetails(int,String,String)
+      + updateCourseFee(int,int,double)
+      + cancelCourseRegistration(int,int)
+      + getAllCourses() List~CourseModel~
+      + getAllBranches() List~BranchModel~
+      + addCourse(String)
+      + addBranch(String)
+    }
+
+    class InputValidationUtil {
+      + readIntInRange(Scanner,int,int,String) int
+      + readPositiveInt(Scanner,String) int
+      + readPositiveDouble(Scanner,String) double
+      + readNonBlank(Scanner,String) String
+      + readValidName(Scanner,String) String
+    }
+
+    class DatabaseConnectionUtil {
+      + getDatabaseConnection() Connection
+    }
+
+    class MainApplication {
+      + main(String[])
+      - selectCourseId(...)
+      - getUniqueStudentIdForAdd(...)
+      - getExistingStudentId(...)
+    }
+
+    MainApplication ..> StudentServiceLayer : uses
+    MainApplication ..> InputValidationUtil : uses
+
+    StudentServiceLayer --> StudentDataAccessObject : uses
+    StudentServiceLayer --> RegistrationDataAccessObject : uses
+    StudentServiceLayer --> CourseDataAccessObject : uses
+    StudentServiceLayer --> BranchDataAccessObject : uses
+
+    StudentDataAccessObject ..> StudentModel
+    RegistrationDataAccessObject ..> RegistrationModel
+    CourseDataAccessObject ..> CourseModel
+    BranchDataAccessObject ..> BranchModel
+
+    StudentDataAccessObject --> DatabaseConnectionUtil
+    RegistrationDataAccessObject --> DatabaseConnectionUtil
+    CourseDataAccessObject --> DatabaseConnectionUtil
+    BranchDataAccessObject --> DatabaseConnectionUtil
+
 ```
 
-4. Run with the JDBC driver on the classpath:
+ER diagram (Mermaid):
 
-```powershell
-java -cp "out;C:\path\to\mysql-connector-java.jar" com.project.app.app.MainApplication
+```mermaid
+erDiagram
+    BRANCH {
+        int branch_id PK "auto-increment"
+        string branch_name "UNIQUE, NOT NULL"
+    }
+    COURSE {
+        int course_id PK "auto-increment"
+        string course_name "UNIQUE, NOT NULL"
+    }
+    STUDENT {
+        int id PK
+        string name "NOT NULL"
+        int age "NOT NULL, CHECK(age > 0)"
+        int branch_id "NOT NULL"
+    }
+    REGISTRATION {
+        int reg_id PK "auto-increment"
+        int student_id "NOT NULL"
+        int course_id "NOT NULL"
+        double fees_paid "NOT NULL, CHECK(fees_paid > 0)"
+        string unique_student_course "UNIQUE(student_id, course_id)"
+    }
+
+    BRANCH ||--o{ STUDENT : "branch_id -> branch.branch_id"
+    COURSE ||--o{ REGISTRATION : "course_id -> course.course_id"
+    STUDENT ||--o{ REGISTRATION : "student_id -> student.id (ON DELETE CASCADE)"
+
 ```
-
-Notes
-- Update DB credentials in `src/com/project/app/util/DatabaseConnectionUtil.java`.
-- The application expects the database `registration_system` to exist and be reachable.
-
-UML Class Diagram (PlantUML)
-----------------------------
-Paste this into a PlantUML editor or save as `class_diagram.puml` and render.
-
-```plantuml
-@startuml
-title Registration System - Class Diagram (high-level)
-
-package com.project.app.model {
-  class StudentModel {
-    - int studentId
-    - String studentName
-    - int studentAge
-    - String studentBranch
-    + StudentModel(int,String,int,String)
-    + getStudentId(): int
-    + getStudentName(): String
-    + getStudentAge(): int
-    + getStudentBranch(): String
-  }
-
-  class RegistrationModel {
-    - int registrationId
-    - int studentId
-    - int courseId
-    - String courseName
-    - double feesPaid
-    + RegistrationModel(int,int,int,String,double)
-    + getRegId(): int
-    + getStudentId(): int
-    + getCourseId(): int
-    + getCourseName(): String
-    + getFeesPaid(): double
-  }
-
-  class CourseModel {
-    - int courseId
-    - String courseName
-    + CourseModel(int,String)
-    + getCourseId(): int
-    + getCourseName(): String
-  }
-
-  class BranchModel {
-    - int branchId
-    - String branchName
-    + BranchModel(int,String)
-    + getBranchId(): int
-    + getBranchName(): String
-  }
-}
-
-package com.project.app.dao {
-  class StudentDataAccessObject {
-    + insertStudent(Connection, StudentModel): boolean
-    + isStudentExists(Connection, int): boolean
-    + findStudentById(Connection, int): Optional<StudentModel>
-    + updateStudentDetails(Connection,int,String,String): int
-    + deleteStudentById(Connection,int): int
-    - getOrCreateBranchId(Connection,String): int
-  }
-
-  class RegistrationDataAccessObject {
-    + isDuplicateRegistration(Connection,int,int): boolean
-    + insertRegistration(Connection,int,int,double): boolean
-    + updateCourseFee(Connection,int,int,double): int
-    + deleteRegistration(Connection,int,int): int
-    + deleteRegistrationsByStudentId(Connection,int): void
-    + findRegistrationsByStudentId(Connection,int): List<RegistrationModel>
-    + fetchAllStudentsWithRegistrations(Connection): List<String>
-    + highPayingStudents(Connection,double): List<String>
-    + courseWiseCount(Connection): List<String>
-    + fetchAllCourses(Connection): List<CourseModel>
-  }
-
-  class CourseDataAccessObject {
-    + insertCourse(Connection,String): boolean
-    + isCourseExists(Connection,String): boolean
-    + updateCourseName(Connection,int,String): boolean
-    + deleteCourseById(Connection,int): boolean
-    + fetchAllCourses(Connection): List<CourseModel>
-  }
-
-  class BranchDataAccessObject {
-    + insertBranch(Connection,String): boolean
-    + isBranchExists(Connection,String): boolean
-    + updateBranchName(Connection,int,String): boolean
-    + deleteBranchById(Connection,int): boolean
-    + fetchAllBranches(Connection): List<BranchModel>
-  }
-}
-
-package com.project.app.service {
-  class StudentServiceLayer {
-    - StudentDataAccessObject studentDAO
-    - RegistrationDataAccessObject registrationDAO
-    - CourseDataAccessObject courseDAO
-    - BranchDataAccessObject branchDAO
-    + addNewStudent(StudentModel): void
-    + registerStudentForCourse(int, int, double): void
-    + viewAllStudentsWithRegistrations(): void
-    + searchStudentRegistrationById(int): void
-    + updateStudentDetails(int,String,String): void
-    + updateCourseFee(int,int,double): void
-    + cancelCourseRegistration(int,int): void
-    + deleteStudentCompletely(int): void
-    + generateHighPayingStudentsReport(double): void
-    + generateCourseWiseCountReport(): void
-    + getAllCourses(): List<CourseModel>
-    + getAllBranches(): List<BranchModel>
-    + isStudentExists(int): boolean
-    + getStudentById(int): Optional<StudentModel>
-    + addCourse(String): void
-    + updateCourseName(int,String): void
-    + deleteCourse(int): void
-    + addBranch(String): void
-    + updateBranchName(int,String): void
-    + deleteBranch(int): void
-  }
-}
-
-package com.project.app.util {
-  class DatabaseConnectionUtil {
-    + getDatabaseConnection(): Connection
-  }
-  class InputValidationUtil {
-    + readIntInRange(Scanner,int,int,String): int
-    + readAnyInt(Scanner): int
-    + readPositiveInt(Scanner,String): int
-    + readPositiveDouble(Scanner,String): double
-    + readNonNegativeDouble(Scanner,String): double
-    + readNonBlank(Scanner,String): String
-    + readValidName(Scanner,String): String
-  }
-}
-
-package com.project.app.app {
-  class MainApplication {
-    + main(String[]): void
-    - helper methods: selectCourseId(...), getUniqueStudentIdForAdd(...), getExistingStudentId(...)
-  }
-}
-
-MainApplication ..> StudentServiceLayer : uses
-MainApplication ..> InputValidationUtil : uses
-StudentServiceLayer --> StudentDataAccessObject
-StudentServiceLayer --> RegistrationDataAccessObject
-StudentServiceLayer --> CourseDataAccessObject
-StudentServiceLayer --> BranchDataAccessObject
-StudentDataAccessObject --> DatabaseConnectionUtil
-RegistrationDataAccessObject --> DatabaseConnectionUtil
-CourseDataAccessObject --> DatabaseConnectionUtil
-BranchDataAccessObject --> DatabaseConnectionUtil
-
-StudentDataAccessObject ..> StudentModel
-RegistrationDataAccessObject ..> RegistrationModel
-CourseDataAccessObject ..> CourseModel
-BranchDataAccessObject ..> BranchModel
-
-@enduml
-```
-
-ER Diagram (PlantUML)
----------------------
-Paste into PlantUML or save as `er_diagram.puml`.
-
-```plantuml
-@startuml
-title Registration System - ER Diagram
-
-entity "branch" as BR {
-  * branch_id : INT <<PK, AUTO_INCREMENT>>
-  --
-  branch_name : VARCHAR(50) <<UNIQUE, NOT NULL>>
-}
-
-entity "course" as CO {
-  * course_id : INT <<PK, AUTO_INCREMENT>>
-  --
-  course_name : VARCHAR(50) <<UNIQUE, NOT NULL>>
-}
-
-entity "student" as ST {
-  * id : INT <<PK>>
-  --
-  name : VARCHAR(50) <<NOT NULL>>
-  age : INT <<NOT NULL, CHECK(age > 0)>>
-  branch_id : INT <<NOT NULL>>
-}
-
-entity "registration" as RG {
-  * reg_id : INT <<PK, AUTO_INCREMENT>>
-  --
-  student_id : INT <<NOT NULL>>
-  course_id : INT <<NOT NULL>>
-  fees_paid : DOUBLE <<NOT NULL, CHECK(fees_paid > 0)>>
-  --
-  -- UNIQUE(student_id, course_id)
-}
-
-BR ||--o{ ST : "1..* students in branch\n(fk: student.branch_id -> branch.branch_id)"
-CO ||--o{ RG : "1..* registrations per course\n(fk: registration.course_id -> course.course_id)"
-ST ||--o{ RG : "1..* registrations per student\n(fk: registration.student_id -> student.id)\nON DELETE CASCADE"
-
-note top of RG
-  Constraint: UNIQUE(student_id, course_id)
-end note
-
-@enduml
-```
-
-
-
