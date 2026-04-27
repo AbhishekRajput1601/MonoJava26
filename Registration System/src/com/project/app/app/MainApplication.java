@@ -40,6 +40,7 @@ public class MainApplication {
 
             int choice = readMenuChoice(scanner);
 
+            try {
             switch (choice) {
                 case 1:
                     int id1 = getUniqueStudentIdForAdd(scanner, service);
@@ -47,6 +48,7 @@ public class MainApplication {
                     int age = InputValidationUtil.readPositiveInt(scanner, "Student Age");
                     String branch1 = InputValidationUtil.readNonBlank(scanner, "Student Branch");
                     service.addNewStudent(new StudentModel(id1, name1, age, branch1));
+                    System.out.println("Student added successfully.");
                     break;
 
                 case 2:
@@ -55,15 +57,22 @@ public class MainApplication {
                     if (courseId2 <= 0) break;
                     double fee2 = InputValidationUtil.readPositiveDouble(scanner, "Fees Paid");
                     service.registerStudentForCourse(id2, courseId2, fee2);
+                    System.out.println("Course registration successful.");
                     break;
 
                 case 3:
-                    service.viewAllStudentsWithRegistrations();
+                    var rows = service.viewAllStudentsWithRegistrations();
+                    if (rows.isEmpty()) {
+                        System.out.println("No students found.");
+                    } else {
+                        rows.forEach(System.out::println);
+                    }
                     break;
 
                 case 4:
                     int id4 = InputValidationUtil.readPositiveInt(scanner, "Student ID");
-                    service.searchStudentRegistrationById(id4);
+                    var rep = service.searchStudentRegistrationById(id4);
+                    rep.forEach(System.out::println);
                     break;
 
                 case 5:
@@ -77,13 +86,16 @@ public class MainApplication {
                     int upd = InputValidationUtil.readIntInRange(scanner, 1, 4, "Choose option: ");
 
                     if (upd == 1) {
-                        service.updateStudentDetails(id5, InputValidationUtil.readValidName(scanner, "New Name"), currentBranch);
+                        boolean ok = service.updateStudentDetails(id5, InputValidationUtil.readValidName(scanner, "New Name"), currentBranch);
+                        System.out.println(ok ? "Student updated successfully." : "Student not found.");
                     } else if (upd == 2) {
-                        service.updateStudentDetails(id5, currentName, InputValidationUtil.readNonBlank(scanner, "New Branch"));
+                        boolean ok = service.updateStudentDetails(id5, currentName, InputValidationUtil.readNonBlank(scanner, "New Branch"));
+                        System.out.println(ok ? "Student updated successfully." : "Student not found.");
                     } else if (upd == 3) {
-                        service.updateStudentDetails(id5,
+                        boolean ok = service.updateStudentDetails(id5,
                                 InputValidationUtil.readValidName(scanner, "New Name"),
                                 InputValidationUtil.readNonBlank(scanner, "New Branch"));
+                        System.out.println(ok ? "Student updated successfully." : "Student not found.");
                     }
                     break;
 
@@ -92,32 +104,38 @@ public class MainApplication {
                     int courseId6 = selectCourseId(scanner, service);
                     if (courseId6 <= 0) break;
                     double fee6 = InputValidationUtil.readPositiveDouble(scanner, "New Fee");
-                    service.updateCourseFee(id6, courseId6, fee6);
+                    boolean updated = service.updateCourseFee(id6, courseId6, fee6);
+                    System.out.println(updated ? "Course fee updated." : "Registration not found.");
                     break;
 
                 case 7:
                     int id7 = getExistingStudentId(scanner, service);
                     int courseId7 = selectCourseId(scanner, service);
                     if (courseId7 <= 0) break;
-                    service.cancelCourseRegistration(id7, courseId7);
+                    boolean cancelled = service.cancelCourseRegistration(id7, courseId7);
+                    System.out.println(cancelled ? "Registration cancelled." : "Registration not found.");
                     break;
 
                 case 8:
                     int id8 = InputValidationUtil.readPositiveInt(scanner, "Student ID");
                     service.deleteStudentCompletely(id8);
+                    System.out.println("Student deleted successfully.");
                     break;
 
                 case 9:
                     double minFee = InputValidationUtil.readNonNegativeDouble(scanner, "Minimum Fee");
-                    service.generateHighPayingStudentsReport(minFee);
+                    var list = service.generateHighPayingStudentsReport(minFee);
+                    if (list.isEmpty()) System.out.println("No high-paying students found."); else list.forEach(System.out::println);
                     break;
 
                 case 10:
-                    service.generateCourseWiseCountReport();
+                    var cw = service.generateCourseWiseCountReport();
+                    if (cw.isEmpty()) System.out.println("No course registrations found."); else cw.forEach(System.out::println);
                     break;
 
                 case 11:
                     service.addCourse(InputValidationUtil.readNonBlank(scanner, "Course Name"));
+                    System.out.println("Course added.");
                     break;
 
                 case 12:
@@ -130,6 +148,7 @@ public class MainApplication {
 
                 case 14:
                     service.addBranch(InputValidationUtil.readNonBlank(scanner, "Branch Name"));
+                    System.out.println("Branch added.");
                     break;
 
                 case 15:
@@ -167,6 +186,13 @@ public class MainApplication {
                 case 19:
                     System.out.println("Exiting...");
                     return;
+            }
+            } catch (com.project.app.exceptions.DuplicateEntityException | com.project.app.exceptions.EntityNotFoundException |
+                    IllegalArgumentException | com.project.app.exceptions.TransactionFailureException |
+                    com.project.app.exceptions.DataAccessException e) {
+                System.out.println("Error: " + e.getMessage());
+            } catch (Exception e) {
+                System.out.println("Unexpected error: " + e.getMessage());
             }
         }
     }
@@ -214,8 +240,9 @@ public class MainApplication {
             System.out.println((i + 1) + ". " + list.get(i).getCourseName());
         }
         int c = InputValidationUtil.readIntInRange(sc, 1, list.size(), "Choose: ");
-        service.updateCourseName(list.get(c - 1).getCourseId(),
+        boolean ok = service.updateCourseName(list.get(c - 1).getCourseId(),
                 InputValidationUtil.readNonBlank(sc, "New Course Name"));
+        System.out.println(ok ? "Course updated." : "Course not found.");
     }
 
     private static void deleteCourse(Scanner sc, StudentServiceLayer service) {
@@ -225,7 +252,21 @@ public class MainApplication {
             System.out.println((i + 1) + ". " + list.get(i).getCourseName());
         }
         int c = InputValidationUtil.readIntInRange(sc, 1, list.size(), "Choose: ");
-        service.deleteCourse(list.get(c - 1).getCourseId());
+        int courseId = list.get(c - 1).getCourseId();
+        try {
+            boolean ok = service.deleteCourse(courseId);
+            System.out.println(ok ? "Course deleted." : "Course not found.");
+        } catch (com.project.app.exceptions.ForeignKeyConstraintException fk) {
+            System.out.println("Cannot delete course: there are registrations referencing it.");
+            System.out.print("Delete all registrations for this course and then delete the course? (y/n): ");
+            String ans = sc.nextLine().trim();
+            if (ans.equalsIgnoreCase("y") || ans.equalsIgnoreCase("yes")) {
+                service.deleteCourseCompletely(courseId);
+                System.out.println("Course and its registrations deleted.");
+            } else {
+                System.out.println("Delete aborted.");
+            }
+        }
     }
 
     private static void updateBranch(Scanner sc, StudentServiceLayer service) {
@@ -235,8 +276,9 @@ public class MainApplication {
             System.out.println((i + 1) + ". " + list.get(i).getBranchName());
         }
         int b = InputValidationUtil.readIntInRange(sc, 1, list.size(), "Choose: ");
-        service.updateBranchName(list.get(b - 1).getBranchId(),
+        boolean ok = service.updateBranchName(list.get(b - 1).getBranchId(),
                 InputValidationUtil.readNonBlank(sc, "New Branch Name"));
+        System.out.println(ok ? "Branch updated." : "Branch not found.");
     }
 
     private static void deleteBranch(Scanner sc, StudentServiceLayer service) {
@@ -246,6 +288,7 @@ public class MainApplication {
             System.out.println((i + 1) + ". " + list.get(i).getBranchName());
         }
         int b = InputValidationUtil.readIntInRange(sc, 1, list.size(), "Choose: ");
-        service.deleteBranch(list.get(b - 1).getBranchId());
+        boolean ok = service.deleteBranch(list.get(b - 1).getBranchId());
+        System.out.println(ok ? "Branch deleted." : "Branch not found or cannot delete (foreign key constraint). ");
     }
 }
