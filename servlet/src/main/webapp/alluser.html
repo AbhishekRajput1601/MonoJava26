@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Users</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; }
+        .wrap { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 8px; padding: 24px; }
+        h1 { margin-top: 0; color: #1f2937; }
+        .actions { margin-bottom: 14px; }
+        button, a { display: inline-block; margin-right: 8px; padding: 10px 14px; border-radius: 6px; text-decoration: none; border: 0; cursor: pointer; color: #fff; }
+        button { background: #0f766e; }
+        a { background: #6b7280; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        th, td { border: 1px solid #d1d5db; padding: 10px; text-align: left; }
+        th { background: #e5e7eb; }
+        #msg { margin-top: 12px; font-weight: 600; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <h1>All Users</h1>
+    <div class="actions">
+        <button id="loadBtn" type="button">Refresh List</button>
+        <a href="curdoperation.html">Back Home</a>
+    </div>
+    <div id="msg"></div>
+    <table id="usersTable" style="display:none;">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Branch</th>
+            <th>Marks</th>
+        </tr>
+        </thead>
+        <tbody id="usersBody"></tbody>
+    </table>
+</div>
+
+<script>
+    function getCrudUrl() {
+        var parts = window.location.pathname.split('/').filter(Boolean);
+        var contextPath = parts.length > 0 ? '/' + parts[0] : '';
+        return window.location.origin + contextPath + '/crud';
+    }
+
+    function renderUsers(users) {
+        var table = document.getElementById('usersTable');
+        var body = document.getElementById('usersBody');
+        var msg = document.getElementById('msg');
+
+        body.innerHTML = '';
+
+        if (!users || users.length === 0) {
+            table.style.display = 'none';
+            msg.textContent = 'No users found.';
+            msg.style.color = '#b45309';
+            return;
+        }
+
+        users.forEach(function (user) {
+            var row = document.createElement('tr');
+            row.innerHTML = '' +
+                '<td>' + user.id + '</td>' +
+                '<td>' + (user.name || '') + '</td>' +
+                '<td>' + user.age + '</td>' +
+                '<td>' + (user.branch || '') + '</td>' +
+                '<td>' + user.marks + '</td>';
+            body.appendChild(row);
+        });
+
+        table.style.display = 'table';
+        msg.textContent = 'Users loaded successfully.';
+        msg.style.color = '#15803d';
+    }
+
+    function loadUsers() {
+        var msg = document.getElementById('msg');
+        msg.textContent = 'Loading...';
+        msg.style.color = '#1d4ed8';
+
+        fetch(getCrudUrl() + '/all')
+            .then(function (res) {
+                if (!res.ok) {
+                    throw new Error('Failed to load users');
+                }
+                return res.json();
+            })
+            .then(function (users) {
+                renderUsers(users);
+            })
+            .catch(function () {
+                document.getElementById('usersTable').style.display = 'none';
+                msg.textContent = 'Could not load users. Please try again.';
+                msg.style.color = '#dc2626';
+            });
+    }
+
+    document.getElementById('loadBtn').addEventListener('click', loadUsers);
+    loadUsers();
+</script>
+</body>
+</html>

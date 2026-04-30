@@ -1,53 +1,125 @@
 package com.code;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserService {
-    private static final List<User> users = new ArrayList<>();
-    private static int idCounter = 1;
 
+    public static void addUser(String name, int age, String branch, int marks) {
+        String query = "INSERT INTO user (id, name, age, branch, marks) VALUES (?, ?, ?, ?, ?)";
 
-    public static void addUser(String name, int age, String mobileNo, String departmentName, String courseName) {
-        User user = new User(idCounter++, name, age, mobileNo, departmentName, courseName);
-        users.add(user);
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            int nextId = getNextUserId();
+            pstmt.setInt(1, nextId);
+            pstmt.setString(2, name);
+            pstmt.setInt(3, age);
+            pstmt.setString(4, branch);
+            pstmt.setInt(5, marks);
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static int getNextUserId() {
-        return idCounter;
+        String query = "SELECT MAX(id) FROM user";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            if (rs.next()) {
+                int maxId = rs.getInt(1);
+                return maxId + 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 1;
     }
 
-
     public static User getUserById(int id) {
-        for (User user : users) {
-            if (user.getId() == id) {
-                return user;
+        String query = "SELECT * FROM user WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return new User(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getInt("age"),
+                    rs.getString("branch"),
+                    rs.getInt("marks")
+                );
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
+    public static List<User> getAllUsers() {
+        String query = "SELECT * FROM user";
+        List<User> users = new ArrayList<>();
 
-    public static boolean updateUser(int id, String name, int age, String mobileNo, String departmentName, String courseName) {
-        User user = getUserById(id);
-        if (user != null) {
-            user.setName(name);
-            user.setAge(age);
-            user.setMobileNo(mobileNo);
-            user.setDepartmentName(departmentName);
-            user.setCourseName(courseName);
-            return true;
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
+                users.add(new User(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getInt("age"),
+                    rs.getString("branch"),
+                    rs.getInt("marks")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+    public static boolean updateUser(int id, String name, int age, String branch, int marks) {
+        String query = "UPDATE user SET name = ?, age = ?, branch = ?, marks = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, name);
+            pstmt.setInt(2, age);
+            pstmt.setString(3, branch);
+            pstmt.setInt(4, marks);
+            pstmt.setInt(5, id);
+
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return false;
     }
 
-
-
     public static boolean deleteUser(int id) {
-        User user = getUserById(id);
-        if (user != null) {
-            users.remove(user);
-            return true;
+        String query = "DELETE FROM user WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setInt(1, id);
+            int rowsDeleted = pstmt.executeUpdate();
+            return rowsDeleted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return false;
     }

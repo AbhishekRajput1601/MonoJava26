@@ -9,12 +9,16 @@
         .wrap { max-width: 760px; margin: 40px auto; background: #fff; border-radius: 8px; padding: 24px; }
         h1 { margin-top: 0; color: #1f2937; }
         p { color: #4b5563; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-top: 18px; }
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 18px; }
         a { display: block; text-decoration: none; text-align: center; padding: 12px; border-radius: 6px; color: #fff; font-weight: 600; }
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+        }
         .add { background: #16a34a; }
         .update { background: #2563eb; }
         .delete { background: #dc2626; }
         .view { background: #d97706; }
+        .all { background: #0f766e; }
     </style>
 </head>
 <body>
@@ -27,6 +31,7 @@
         <a class="update" href="updateuser.html">Update User</a>
         <a class="delete" href="deleteuser.html">Delete User</a>
         <a class="view" href="userview.html">View User</a>
+        <a class="all" href="alluser.html">Show All Users</a>
     </div>
 </div>
 </body>

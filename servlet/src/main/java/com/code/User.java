@@ -4,26 +4,24 @@ public class User {
     private int id;
     private String name;
     private int age;
-    private String mobileNo;
-    private String departmentName;
-    private String courseName;
+    private String branch;
+    private int marks;
 
-    public User() {}
-
-
-    public User(int id, String name, int age, String mobileNo, String departmentName, String courseName) {
+    public User(int id, String name, int age, String branch, int marks) {
         this.id = id;
         this.name = name;
         this.age = age;
-        this.mobileNo = mobileNo;
-        this.departmentName = departmentName;
-        this.courseName = courseName;
+        this.branch = branch;
+        this.marks = marks;
     }
 
     public int getId() {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -41,28 +39,20 @@ public class User {
         this.age = age;
     }
 
-    public String getMobileNo() {
-        return mobileNo;
+    public String getBranch() {
+        return branch;
     }
 
-    public void setMobileNo(String mobileNo) {
-        this.mobileNo = mobileNo;
+    public void setBranch(String branch) {
+        this.branch = branch;
     }
 
-    public String getDepartmentName() {
-        return departmentName;
+    public int getMarks() {
+        return marks;
     }
 
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
-    }
-
-    public String getCourseName() {
-        return courseName;
-    }
-
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
+    public void setMarks(int marks) {
+        this.marks = marks;
     }
 
     @Override
@@ -71,9 +61,8 @@ public class User {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", age=" + age +
-                ", mobileNo='" + mobileNo + '\'' +
-                ", departmentName='" + departmentName + '\'' +
-                ", courseName='" + courseName + '\'' +
+                ", branch='" + branch + '\'' +
+                ", marks=" + marks +
                 '}';
     }
 }

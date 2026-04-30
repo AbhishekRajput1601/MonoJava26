@@ -39,16 +39,12 @@
             <input id="age" name="age" type="number" min="1" max="150" placeholder="Leave blank to keep current value">
         </div>
         <div class="field">
-            <label for="mobileNo">Mobile No</label>
-            <input id="mobileNo" name="mobileNo" type="text" placeholder="Leave blank to keep current value">
+            <label for="branch">Branch</label>
+            <input id="branch" name="branch" type="text" placeholder="Leave blank to keep current value">
         </div>
         <div class="field">
-            <label for="departmentName">Department Name</label>
-            <input id="departmentName" name="departmentName" type="text" placeholder="Leave blank to keep current value">
-        </div>
-        <div class="field">
-            <label for="courseName">Course Name</label>
-            <input id="courseName" name="courseName" type="text" placeholder="Leave blank to keep current value">
+            <label for="marks">Marks</label>
+            <input id="marks" name="marks" type="number" min="0" max="100" placeholder="Leave blank to keep current value">
         </div>
         <button type="submit">Update User</button>
     </form>
@@ -85,9 +81,8 @@
                 currentUserId = user.id;
                 document.getElementById('name').value = user.name || '';
                 document.getElementById('age').value = user.age || '';
-                document.getElementById('mobileNo').value = user.mobileNo || '';
-                document.getElementById('departmentName').value = user.departmentName || '';
-                document.getElementById('courseName').value = user.courseName || '';
+                document.getElementById('branch').value = user.branch || '';
+                document.getElementById('marks').value = user.marks || '';
                 document.getElementById('updateForm').style.display = 'block';
                 loadedInfo.textContent = 'Loaded user #' + user.id + '. Leave any field blank to keep its current value.';
                 loadedInfo.style.color = 'green';
@@ -113,12 +108,14 @@
         var payload = new URLSearchParams();
         payload.append('name', document.getElementById('name').value);
         payload.append('age', document.getElementById('age').value);
-        payload.append('mobileNo', document.getElementById('mobileNo').value);
-        payload.append('departmentName', document.getElementById('departmentName').value);
-        payload.append('courseName', document.getElementById('courseName').value);
+        payload.append('branch', document.getElementById('branch').value);
+        payload.append('marks', document.getElementById('marks').value);
 
         fetch(getCrudUrl() + '/' + currentUserId, {
             method: 'PUT',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+            },
             body: payload
         }).then(function (res) {
             if (res.ok) {
