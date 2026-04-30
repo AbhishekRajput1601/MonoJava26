@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User CRUD Home</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; }
+        .wrap { max-width: 760px; margin: 40px auto; background: #fff; border-radius: 8px; padding: 24px; }
+        h1 { margin-top: 0; color: #1f2937; }
+        p { color: #4b5563; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-top: 18px; }
+        a { display: block; text-decoration: none; text-align: center; padding: 12px; border-radius: 6px; color: #fff; font-weight: 600; }
+        .add { background: #16a34a; }
+        .update { background: #2563eb; }
+        .delete { background: #dc2626; }
+        .view { background: #d97706; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <h1>User CRUD Application</h1>
+    <p>Choose an operation below. The backend is served by the <code>/crud</code> servlet.</p>
+
+    <div class="grid">
+        <a class="add" href="adduser.html">Add User</a>
+        <a class="update" href="updateuser.html">Update User</a>
+        <a class="delete" href="deleteuser.html">Delete User</a>
+        <a class="view" href="userview.html">View User</a>
+    </div>
+</div>
+</body>
+</html>

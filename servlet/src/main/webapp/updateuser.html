@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update User</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; }
+        .wrap { max-width: 620px; margin: 40px auto; background: #fff; border-radius: 8px; padding: 24px; }
+        .field { margin-bottom: 12px; }
+        label { display: block; font-weight: 600; margin-bottom: 6px; }
+        input { width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 5px; box-sizing: border-box; }
+        button, a { display: inline-block; margin-top: 8px; padding: 10px 14px; border-radius: 6px; text-decoration: none; border: 0; cursor: pointer; }
+        button { background: #2563eb; color: #fff; }
+        a { background: #6b7280; color: #fff; }
+        #loadedInfo { margin-top: 12px; font-weight: 600; }
+        #msg { margin-top: 10px; font-weight: 600; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <h1>Update User</h1>
+    <div class="field">
+        <label for="id">Enter User ID</label>
+        <input id="id" name="id" type="number" min="1" required>
+    </div>
+    <button id="loadBtn" type="button">Load User</button>
+    <a href="curdoperation.html">Back Home</a>
+    <div id="loadedInfo"></div>
+    <div id="msg"></div>
+
+    <form id="updateForm" style="display:none; margin-top: 18px;">
+        <div class="field">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" placeholder="Leave blank to keep current value">
+        </div>
+        <div class="field">
+            <label for="age">Age</label>
+            <input id="age" name="age" type="number" min="1" max="150" placeholder="Leave blank to keep current value">
+        </div>
+        <div class="field">
+            <label for="mobileNo">Mobile No</label>
+            <input id="mobileNo" name="mobileNo" type="text" placeholder="Leave blank to keep current value">
+        </div>
+        <div class="field">
+            <label for="departmentName">Department Name</label>
+            <input id="departmentName" name="departmentName" type="text" placeholder="Leave blank to keep current value">
+        </div>
+        <div class="field">
+            <label for="courseName">Course Name</label>
+            <input id="courseName" name="courseName" type="text" placeholder="Leave blank to keep current value">
+        </div>
+        <button type="submit">Update User</button>
+    </form>
+</div>
+
+<script>
+    function getCrudUrl() {
+        var parts = window.location.pathname.split('/').filter(Boolean);
+        var contextPath = parts.length > 0 ? '/' + parts[0] : '';
+        return window.location.origin + contextPath + '/crud';
+    }
+
+    var currentUserId = null;
+
+    document.getElementById('loadBtn').addEventListener('click', function () {
+        var id = document.getElementById('id').value;
+        var loadedInfo = document.getElementById('loadedInfo');
+
+        if (!id) {
+            loadedInfo.textContent = 'Please enter a user ID first.';
+            loadedInfo.style.color = 'red';
+            document.getElementById('updateForm').style.display = 'none';
+            return;
+        }
+
+        fetch(getCrudUrl() + '/' + id)
+            .then(function (res) {
+                if (!res.ok) {
+                    throw new Error('User not found');
+                }
+                return res.json();
+            })
+            .then(function (user) {
+                currentUserId = user.id;
+                document.getElementById('name').value = user.name || '';
+                document.getElementById('age').value = user.age || '';
+                document.getElementById('mobileNo').value = user.mobileNo || '';
+                document.getElementById('departmentName').value = user.departmentName || '';
+                document.getElementById('courseName').value = user.courseName || '';
+                document.getElementById('updateForm').style.display = 'block';
+                loadedInfo.textContent = 'Loaded user #' + user.id + '. Leave any field blank to keep its current value.';
+                loadedInfo.style.color = 'green';
+                document.getElementById('msg').textContent = '';
+            })
+            .catch(function () {
+                currentUserId = null;
+                document.getElementById('updateForm').style.display = 'none';
+                loadedInfo.textContent = 'User not found for provided ID.';
+                loadedInfo.style.color = 'red';
+            });
+    });
+
+    document.getElementById('updateForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        if (!currentUserId) {
+            document.getElementById('msg').textContent = 'Load a user first.';
+            document.getElementById('msg').style.color = 'red';
+            return;
+        }
+
+        var payload = new URLSearchParams();
+        payload.append('name', document.getElementById('name').value);
+        payload.append('age', document.getElementById('age').value);
+        payload.append('mobileNo', document.getElementById('mobileNo').value);
+        payload.append('departmentName', document.getElementById('departmentName').value);
+        payload.append('courseName', document.getElementById('courseName').value);
+
+        fetch(getCrudUrl() + '/' + currentUserId, {
+            method: 'PUT',
+            body: payload
+        }).then(function (res) {
+            if (res.ok) {
+                document.getElementById('msg').textContent = 'User updated successfully.';
+                document.getElementById('msg').style.color = 'green';
+            } else {
+                document.getElementById('msg').textContent = 'Update failed.';
+                document.getElementById('msg').style.color = 'red';
+            }
+        }).catch(function () {
+            document.getElementById('msg').textContent = 'Network error while updating user.';
+            document.getElementById('msg').style.color = 'red';
+        });
+    });
+
+    var initialId = new URLSearchParams(window.location.search).get('id');
+    if (initialId) {
+        document.getElementById('id').value = initialId;
+        document.getElementById('loadBtn').click();
+    }
+</script>
+</body>
+</html>

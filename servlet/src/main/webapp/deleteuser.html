@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete User</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; }
+        .wrap { max-width: 520px; margin: 40px auto; background: #fff; border-radius: 8px; padding: 24px; }
+        label { display: block; font-weight: 600; margin-bottom: 6px; }
+        input { width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 5px; box-sizing: border-box; }
+        button, a { display: inline-block; margin-top: 10px; padding: 10px 14px; border-radius: 6px; text-decoration: none; border: 0; cursor: pointer; }
+        button { background: #dc2626; color: #fff; }
+        a { background: #6b7280; color: #fff; }
+        #msg { margin-top: 10px; font-weight: 600; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <h1>Delete User</h1>
+    <form id="deleteForm">
+        <label for="id">User ID</label>
+        <input id="id" type="number" min="1" required>
+        <button type="submit">Delete User</button>
+        <a href="curdoperation.html">Back Home</a>
+    </form>
+    <div id="msg"></div>
+</div>
+
+<script>
+    function getCrudUrl() {
+        var parts = window.location.pathname.split('/').filter(Boolean);
+        var contextPath = parts.length > 0 ? '/' + parts[0] : '';
+        return window.location.origin + contextPath + '/crud';
+    }
+
+    document.getElementById('deleteForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        var id = document.getElementById('id').value;
+
+        fetch(getCrudUrl() + '/' + id, { method: 'DELETE' })
+            .then(function (res) {
+                if (res.ok) {
+                    document.getElementById('msg').textContent = 'User deleted successfully.';
+                    document.getElementById('msg').style.color = 'green';
+                } else {
+                    document.getElementById('msg').textContent = 'Delete failed.';
+                    document.getElementById('msg').style.color = 'red';
+                }
+            }).catch(function () {
+                document.getElementById('msg').textContent = 'Network error while deleting user.';
+                document.getElementById('msg').style.color = 'red';
+            });
+    });
+</script>
+</body>
+</html>

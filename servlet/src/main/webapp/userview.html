@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View User</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; }
+        .wrap { max-width: 520px; margin: 40px auto; background: #fff; border-radius: 8px; padding: 24px; }
+        label { display: block; font-weight: 600; margin-bottom: 6px; }
+        input { width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 5px; box-sizing: border-box; }
+        button, a { display: inline-block; margin-top: 10px; padding: 10px 14px; border-radius: 6px; text-decoration: none; border: 0; cursor: pointer; color: #fff; }
+        button { background: #d97706; }
+        a { background: #0f766e; }
+        .back { background: #6b7280; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <h1>View User</h1>
+    <form id="viewForm">
+        <label for="id">User ID</label>
+        <input id="id" type="number" min="1" required>
+        <button type="submit">Load User Details</button>
+    </form>
+    <a class="back" href="curdoperation.html">Back Home</a>
+    <div id="result" style="margin-top: 14px;"></div>
+</div>
+
+<script>
+    function getCrudUrl() {
+        var parts = window.location.pathname.split('/').filter(Boolean);
+        var contextPath = parts.length > 0 ? '/' + parts[0] : '';
+        return window.location.origin + contextPath + '/crud';
+    }
+
+    document.getElementById('viewForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        var id = document.getElementById('id').value;
+        var result = document.getElementById('result');
+
+        fetch(getCrudUrl() + '/' + id)
+            .then(function (res) {
+                if (!res.ok) {
+                    throw new Error('User not found');
+                }
+                return res.json();
+            })
+            .then(function (user) {
+                result.innerHTML = '' +
+                    '<p><strong>ID:</strong> ' + user.id + '</p>' +
+                    '<p><strong>Name:</strong> ' + user.name + '</p>' +
+                    '<p><strong>Age:</strong> ' + user.age + '</p>' +
+                    '<p><strong>Mobile No:</strong> ' + user.mobileNo + '</p>' +
+                    '<p><strong>Department:</strong> ' + user.departmentName + '</p>' +
+                    '<p><strong>Course:</strong> ' + user.courseName + '</p>';
+            })
+            .catch(function () {
+                result.innerHTML = '<p style="color:red;">User not found.</p>';
+            });
+    });
+
+    var initialId = new URLSearchParams(window.location.search).get('id');
+    if (initialId) {
+        document.getElementById('id').value = initialId;
+        document.getElementById('viewForm').dispatchEvent(new Event('submit'));
+    }
+</script>
+</body>
+</html>
