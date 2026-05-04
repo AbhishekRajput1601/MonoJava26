@@ -3,14 +3,17 @@ package com.code;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class UserService {
+    private static final Logger logger = Logger.getLogger(UserService.class.getName());
 
     public static void addUser(String name, int age, String branch, int marks) {
         String query = "INSERT INTO user (id, name, age, branch, marks) VALUES (?, ?, ?, ?, ?)";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
 
             int nextId = getNextUserId();
             pstmt.setInt(1, nextId);
@@ -20,8 +23,9 @@ public class UserService {
             pstmt.setInt(5, marks);
 
             pstmt.executeUpdate();
+            logger.info("User added successfully: ID=" + nextId + ", Name=" + name);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error creating user: " + name, e);
         }
     }
 
@@ -37,7 +41,7 @@ public class UserService {
                 return maxId + 1;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error retrieving next user ID", e);
         }
         return 1;
     }
@@ -52,16 +56,19 @@ public class UserService {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                return new User(
+                User user = new User(
                     rs.getInt("id"),
                     rs.getString("name"),
                     rs.getInt("age"),
                     rs.getString("branch"),
                     rs.getInt("marks")
                 );
+                logger.fine("User retrieved: ID=" + id);
+                return user;
             }
+            logger.fine("User not found: ID=" + id);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error retrieving user with ID: " + id, e);
         }
         return null;
     }
@@ -83,8 +90,9 @@ public class UserService {
                     rs.getInt("marks")
                 ));
             }
+            logger.info("Retrieved " + users.size() + " users from database");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error retrieving all users", e);
         }
         return users;
     }
@@ -102,9 +110,13 @@ public class UserService {
             pstmt.setInt(5, id);
 
             int rowsUpdated = pstmt.executeUpdate();
-            return rowsUpdated > 0;
+            if (rowsUpdated > 0) {
+                logger.info("User updated successfully: ID=" + id);
+                return true;
+            }
+            logger.warning("Update failed: User not found with ID=" + id);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error updating user with ID: " + id, e);
         }
         return false;
     }
@@ -117,9 +129,13 @@ public class UserService {
 
             pstmt.setInt(1, id);
             int rowsDeleted = pstmt.executeUpdate();
-            return rowsDeleted > 0;
+            if (rowsDeleted > 0) {
+                logger.info("User deleted successfully: ID=" + id);
+                return true;
+            }
+            logger.warning("Delete failed: User not found with ID=" + id);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error deleting user with ID: " + id, e);
         }
         return false;
     }

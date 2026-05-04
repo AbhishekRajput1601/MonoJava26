@@ -12,21 +12,19 @@ public class RegistrationDAO {
         String sql = "INSERT INTO registrations (student_name, email, age, course_name, batch_time) " +
                      "VALUES (?, ?, ?, ?, ?)";
 
-        Connection conn = null;
+        Connection connection = null;
         PreparedStatement pstmt = null;
 
         try {
-            conn = DatabaseConnection.getConnection();
-            pstmt = conn.prepareStatement(sql);
+            connection = DatabaseConnection.getConnection();
+            pstmt = connection.prepareStatement(sql);
 
-            // Set parameters
             pstmt.setString(1, studentName);
             pstmt.setString(2, email);
             pstmt.setInt(3, age);
             pstmt.setString(4, courseName);
             pstmt.setString(5, batchTime);
 
-            // Execute update
             int rowsAffected = pstmt.executeUpdate();
 
             if (rowsAffected > 0) {
@@ -45,7 +43,7 @@ public class RegistrationDAO {
             } catch (SQLException e) {
                 System.err.println("Error closing PreparedStatement: " + e.getMessage());
             }
-            DatabaseConnection.closeConnection(conn);
+            DatabaseConnection.closeConnection(connection);
         }
 
         return false;

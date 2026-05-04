@@ -3,14 +3,21 @@ package com.code;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
+
 
 public class CrudServlet extends HttpServlet {
+    private static final Logger logger = Logger.getLogger(CrudServlet.class.getName());
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final int MAX_NAME_LENGTH = 100;
+    private static final int MAX_BRANCH_LENGTH = 100;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -50,61 +57,56 @@ public class CrudServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
         String pathInfo = request.getPathInfo();
 
-        if (pathInfo != null && pathInfo.startsWith("/")) {
-            try {
-                int id = Integer.parseInt(pathInfo.substring(1));
-                updateUser(request, response, id, readFormBody(request));
-            } catch (NumberFormatException e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().println("Invalid user ID");
-            }
+        Integer id = parseIdFromPath(pathInfo);
+        if (id != null) {
+            updateUser(request, response, id, readFormBody(request));
         } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().println("User ID required");
+            sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid or missing user ID");
         }
     }
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
         String pathInfo = request.getPathInfo();
 
-        if (pathInfo != null && pathInfo.startsWith("/")) {
-            try {
-                int id = Integer.parseInt(pathInfo.substring(1));
-                deleteUser(response, id);
-            } catch (NumberFormatException e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().println("Invalid user ID");
-            }
+        Integer id = parseIdFromPath(pathInfo);
+        if (id != null) {
+            deleteUser(response, id);
         } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().println("User ID required");
+            sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid or missing user ID");
         }
     }
 
     private void createUser(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        String name = request.getParameter("name");
+        String name = sanitizeString(request.getParameter("name"));
         String ageStr = request.getParameter("age");
-        String branch = request.getParameter("branch");
+        String branch = sanitizeString(request.getParameter("branch"));
         String marksStr = request.getParameter("marks");
 
-        if (name != null && !name.isEmpty() && ageStr != null && !ageStr.isEmpty() && branch != null && !branch.isEmpty() && marksStr != null && !marksStr.isEmpty()) {
-            try {
-                int age = Integer.parseInt(ageStr);
-                int marks = Integer.parseInt(marksStr);
-                UserService.addUser(name, age, branch, marks);
-                response.sendRedirect(request.getContextPath() + "/curdoperation.html?success=" + encode("User added successfully"));
-            } catch (NumberFormatException e) {
-                response.sendRedirect(request.getContextPath() + "/adduser.html?error=" + encode("Invalid age or marks"));
-            }
-        } else {
-            response.sendRedirect(request.getContextPath() + "/adduser.html?error=" + encode("Invalid input"));
+        // Validation
+        String error = validateUserInput(name, ageStr, branch, marksStr);
+        if (error != null) {
+            logger.warning("User creation validation failed: " + error);
+            response.sendRedirect(request.getContextPath() + "/adduser.html?error=" + encode(error));
+            return;
+        }
+
+        try {
+            int age = Integer.parseInt(ageStr.trim());
+            int marks = Integer.parseInt(marksStr.trim());
+
+            UserService.addUser(name, age, branch, marks);
+            logger.info("User created successfully: name=" + name);
+            response.sendRedirect(request.getContextPath() + "/curdoperation.html?success=" + encode("User added successfully"));
+        } catch (NumberFormatException e) {
+            logger.warning("Invalid number format for age or marks");
+            response.sendRedirect(request.getContextPath() + "/adduser.html?error=" + encode("Invalid age or marks"));
         }
     }
 
@@ -112,14 +114,14 @@ public class CrudServlet extends HttpServlet {
             throws IOException {
         User currentUser = UserService.getUserById(id);
         if (currentUser == null) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            response.getWriter().println("User not found");
+            logger.warning("Update failed: User not found with ID: " + id);
+            sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "User not found");
             return;
         }
 
-        String name = firstNonBlank(getParam(request, params, "name"), currentUser.getName());
+        String name = firstNonBlank(sanitizeString(getParam(request, params, "name")), currentUser.getName());
         String ageStr = getParam(request, params, "age");
-        String branch = firstNonBlank(getParam(request, params, "branch"), currentUser.getBranch());
+        String branch = firstNonBlank(sanitizeString(getParam(request, params, "branch")), currentUser.getBranch());
         String marksStr = getParam(request, params, "marks");
 
         int age = currentUser.getAge();
@@ -127,8 +129,8 @@ public class CrudServlet extends HttpServlet {
             try {
                 age = Integer.parseInt(ageStr.trim());
             } catch (NumberFormatException e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().println("Invalid age");
+                logger.warning("Update failed: Invalid age value: " + ageStr);
+                sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid age");
                 return;
             }
         }
@@ -138,19 +140,26 @@ public class CrudServlet extends HttpServlet {
             try {
                 marks = Integer.parseInt(marksStr.trim());
             } catch (NumberFormatException e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().println("Invalid marks");
+                logger.warning("Update failed: Invalid marks value: " + marksStr);
+                sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid marks");
                 return;
             }
         }
 
+        // Validate field lengths
+        if (name.length() > MAX_NAME_LENGTH || branch.length() > MAX_BRANCH_LENGTH) {
+            logger.warning("Update failed: Field length exceeded");
+            sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Field length exceeded");
+            return;
+        }
+
         boolean updated = UserService.updateUser(id, name, age, branch, marks);
         if (updated) {
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().println("User updated successfully");
+            logger.info("User updated successfully: ID=" + id);
+            sendJsonSuccess(response, HttpServletResponse.SC_OK, "User updated successfully");
         } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            response.getWriter().println("User not found");
+            logger.warning("Update failed: User not found with ID: " + id);
+            sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "User not found");
         }
     }
 
@@ -158,11 +167,11 @@ public class CrudServlet extends HttpServlet {
             throws IOException {
         boolean deleted = UserService.deleteUser(id);
         if (deleted) {
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().println("User deleted successfully");
+            logger.info("User deleted successfully: ID=" + id);
+            sendJsonSuccess(response, HttpServletResponse.SC_OK, "User deleted successfully");
         } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            response.getWriter().println("User not found");
+            logger.warning("Delete failed: User not found with ID: " + id);
+            sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "User not found");
         }
     }
 
@@ -187,13 +196,7 @@ public class CrudServlet extends HttpServlet {
             return;
         }
 
-        String json = "{"
-                + "\"id\":" + user.getId() + ","
-                + "\"name\":\"" + escapeJson(user.getName()) + "\","
-                + "\"age\":" + user.getAge() + ","
-                + "\"branch\":\"" + escapeJson(user.getBranch()) + "\","
-                + "\"marks\":" + user.getMarks()
-                + "}";
+        String json = mapper.writeValueAsString(user);
         response.getWriter().write(json);
     }
 
@@ -205,23 +208,8 @@ public class CrudServlet extends HttpServlet {
     private void sendAllUsersAsJson(HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         java.util.List<User> users = UserService.getAllUsers();
-
-        StringBuilder json = new StringBuilder("[");
-        for (int i = 0; i < users.size(); i++) {
-            User user = users.get(i);
-            if (i > 0) {
-                json.append(",");
-            }
-            json.append("{")
-                    .append("\"id\":").append(user.getId()).append(",")
-                    .append("\"name\":\"").append(escapeJson(user.getName())).append("\",")
-                    .append("\"age\":").append(user.getAge()).append(",")
-                    .append("\"branch\":\"").append(escapeJson(user.getBranch())).append("\",")
-                    .append("\"marks\":").append(user.getMarks())
-                    .append("}");
-        }
-        json.append("]");
-        response.getWriter().write(json.toString());
+        String json = mapper.writeValueAsString(users);
+        response.getWriter().write(json);
     }
 
     private String escapeJson(String value) {
@@ -229,6 +217,61 @@ public class CrudServlet extends HttpServlet {
             return "";
         }
         return value.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+
+    private void sendJsonSuccess(HttpServletResponse response, int statusCode, String message) throws IOException {
+        response.setStatus(statusCode);
+        Map<String, String> result = new HashMap<>();
+        result.put("message", message);
+        response.getWriter().write(mapper.writeValueAsString(result));
+    }
+
+    private void sendJsonError(HttpServletResponse response, int statusCode, String message) throws IOException {
+        response.setStatus(statusCode);
+        Map<String, String> error = new HashMap<>();
+        error.put("error", message);
+        response.getWriter().write(mapper.writeValueAsString(error));
+    }
+
+    private String sanitizeString(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.trim();
+    }
+
+    private String validateUserInput(String name, String ageStr, String branch, String marksStr) {
+        if (name == null || name.isEmpty()) {
+            return "Name is required";
+        }
+        if (name.length() > MAX_NAME_LENGTH) {
+            return "Name exceeds maximum length of " + MAX_NAME_LENGTH;
+        }
+        if (ageStr == null || ageStr.isEmpty()) {
+            return "Age is required";
+        }
+        if (branch == null || branch.isEmpty()) {
+            return "Branch is required";
+        }
+        if (branch.length() > MAX_BRANCH_LENGTH) {
+            return "Branch exceeds maximum length of " + MAX_BRANCH_LENGTH;
+        }
+        if (marksStr == null || marksStr.isEmpty()) {
+            return "Marks is required";
+        }
+        try {
+            int age = Integer.parseInt(ageStr.trim());
+            if (age < 0 || age > 120) {
+                return "Age must be between 0 and 120";
+            }
+            int marks = Integer.parseInt(marksStr.trim());
+            if (marks < 0 || marks > 100) {
+                return "Marks must be between 0 and 100";
+            }
+        } catch (NumberFormatException e) {
+            return "Age and Marks must be valid numbers";
+        }
+        return null; // No validation errors
     }
 
     private String encode(String value) {

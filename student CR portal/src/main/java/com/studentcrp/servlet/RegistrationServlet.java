@@ -69,8 +69,7 @@ public class RegistrationServlet extends HttpServlet {
         }
 
 
-        boolean isRegistered = registrationDAO.saveRegistration(studentName, email, age,
-                                                                courseName, batchTime);
+        boolean isRegistered = registrationDAO.saveRegistration(studentName, email, age, courseName, batchTime);
 
         if (isRegistered) {
             System.out.println("\n--- Validation Passed ---");

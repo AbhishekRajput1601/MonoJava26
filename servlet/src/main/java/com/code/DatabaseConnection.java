@@ -33,13 +33,4 @@ public class DatabaseConnection {
         }
     }
 
-    public static void closeConnection(Connection conn) {
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }
