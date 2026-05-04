@@ -19,10 +19,6 @@ public class User {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
@@ -35,24 +31,12 @@ public class User {
         return age;
     }
 
-    public void setAge(int age) {
-        this.age = age;
-    }
-
     public String getBranch() {
         return branch;
     }
 
-    public void setBranch(String branch) {
-        this.branch = branch;
-    }
-
     public int getMarks() {
         return marks;
-    }
-
-    public void setMarks(int marks) {
-        this.marks = marks;
     }
 
     @Override
