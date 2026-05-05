@@ -1,21 +1,9 @@
 package com.code;
 
-/**
- * Utility class for validating user input data.
- * Handles validation of user fields like name, age, branch, and marks.
- */
 public class UserValidator {
     private static final int MAX_NAME_LENGTH = 100;
     private static final int MAX_BRANCH_LENGTH = 100;
 
-    /**
-     * Validates all user input fields for creation or update.
-     * @param name the user's name
-     * @param ageStr the age as a string
-     * @param branch the user's branch
-     * @param marksStr the marks as a string
-     * @return error message if validation fails, null if valid
-     */
     public static String validateUserInput(String name, String ageStr, String branch, String marksStr) {
         if (name == null || name.isEmpty()) {
             return "Name is required";
@@ -50,12 +38,6 @@ public class UserValidator {
         return null; // No validation errors
     }
 
-    /**
-     * Validates field lengths for update operations.
-     * @param name the user's name
-     * @param branch the user's branch
-     * @return error message if validation fails, null if valid
-     */
     public static String validateFieldLengths(String name, String branch) {
         if (name != null && name.length() > MAX_NAME_LENGTH) {
             return "Name exceeds maximum length of " + MAX_NAME_LENGTH;
@@ -66,11 +48,7 @@ public class UserValidator {
         return null;
     }
 
-    /**
-     * Tries to parse age as an integer.
-     * @param ageStr the age as a string
-     * @return the parsed age, or -1 if parsing fails
-     */
+
     public static int parseAge(String ageStr) {
         if (ageStr == null || ageStr.trim().isEmpty()) {
             return -1;
@@ -82,11 +60,6 @@ public class UserValidator {
         }
     }
 
-    /**
-     * Tries to parse marks as an integer.
-     * @param marksStr the marks as a string
-     * @return the parsed marks, or -1 if parsing fails
-     */
     public static int parseMarks(String marksStr) {
         if (marksStr == null || marksStr.trim().isEmpty()) {
             return -1;

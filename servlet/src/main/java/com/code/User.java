@@ -15,6 +15,9 @@ public class User {
         this.marks = marks;
     }
 
+    public int getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
