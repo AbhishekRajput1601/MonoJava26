@@ -18,7 +18,7 @@ public class DashboardServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         System.out.println("DashboardServlet initialized");
     }
 
@@ -47,7 +47,7 @@ public class DashboardServlet extends HttpServlet {
         request.setAttribute("totalCourses", totalCourses);
         request.setAttribute("totalRegistrations", totalRegistrations);
 
-        request.getRequestDispatcher("WEB-INF/views/dashboard.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(request, response);
     }
 
     @Override

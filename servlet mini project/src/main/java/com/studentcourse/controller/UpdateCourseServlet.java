@@ -11,6 +11,8 @@ import com.studentcourse.dao.CourseDAO;
 import com.studentcourse.model.Course;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @WebServlet("/updateCourse")
 public class UpdateCourseServlet extends HttpServlet {
@@ -27,7 +29,22 @@ public class UpdateCourseServlet extends HttpServlet {
             return;
         }
 
-        int courseId = Integer.parseInt(request.getParameter("courseId"));
+        String courseIdParam = request.getParameter("courseId");
+        if (courseIdParam == null || courseIdParam.trim().isEmpty()) {
+            String encoded = URLEncoder.encode("Invalid course ID.", StandardCharsets.UTF_8);
+            response.sendRedirect("viewCourses?error=" + encoded);
+            return;
+        }
+
+        int courseId;
+        try {
+            courseId = Integer.parseInt(courseIdParam);
+        } catch (NumberFormatException e) {
+            String encoded = URLEncoder.encode("Invalid course ID.", StandardCharsets.UTF_8);
+            response.sendRedirect("viewCourses?error=" + encoded);
+            return;
+        }
+
         String courseName = request.getParameter("courseName");
         String duration = request.getParameter("duration");
         String feesStr = request.getParameter("fees");
@@ -61,7 +78,7 @@ public class UpdateCourseServlet extends HttpServlet {
             Course course = courseDAO.getCourseById(courseId);
             request.setAttribute("course", course);
             request.setAttribute("errorMessage", errorMessage);
-            request.getRequestDispatcher("WEB-INF/views/update-course.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/update-course.jsp").forward(request, response);
             return;
         }
 
@@ -79,7 +96,7 @@ public class UpdateCourseServlet extends HttpServlet {
             Course fetchedCourse = courseDAO.getCourseById(courseId);
             request.setAttribute("course", fetchedCourse);
             request.setAttribute("errorMessage", "Failed to update course. Please try again.");
-            request.getRequestDispatcher("WEB-INF/views/update-course.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/update-course.jsp").forward(request, response);
         }
     }
 }

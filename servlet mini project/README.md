@@ -68,23 +68,26 @@ src/main/java/com/studentcourse/
     └── DBConnection.java
 
 src/main/webapp/
-├── login.jsp
 ├── index.html
 ├── css/
 │   └── style.css
 └── WEB-INF/
     ├── views/
+    │   ├── login.jsp
     │   ├── dashboard.jsp
     │   ├── student-form.jsp
     │   ├── student-list.jsp
-    │   ├── student-edit.jsp
+    │   ├── update-student.jsp
     │   ├── course-form.jsp
     │   ├── course-list.jsp
-    │   ├── course-edit.jsp
+    │   ├── update-course.jsp
     │   ├── registration-form.jsp
     │   ├── registration-list.jsp
     │   └── error.jsp
     └── web.xml
+
+src/main/resources/
+└── schema.sql
 ```
 
 ## Setup Instructions

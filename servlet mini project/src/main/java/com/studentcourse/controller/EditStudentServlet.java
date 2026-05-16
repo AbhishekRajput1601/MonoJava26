@@ -11,6 +11,8 @@ import com.studentcourse.dao.StudentDAO;
 import com.studentcourse.model.Student;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @WebServlet("/editStudent")
 public class EditStudentServlet extends HttpServlet {
@@ -28,16 +30,31 @@ public class EditStudentServlet extends HttpServlet {
             return;
         }
 
-        int studentId = Integer.parseInt(request.getParameter("id"));
+        String idParam = request.getParameter("id");
+        if (idParam == null || idParam.trim().isEmpty()) {
+            String encoded = URLEncoder.encode("Invalid student ID.", StandardCharsets.UTF_8);
+            response.sendRedirect("viewStudents?error=" + encoded);
+            return;
+        }
+
+        int studentId;
+        try {
+            studentId = Integer.parseInt(idParam);
+        } catch (NumberFormatException e) {
+            String encoded = URLEncoder.encode("Invalid student ID.", StandardCharsets.UTF_8);
+            response.sendRedirect("viewStudents?error=" + encoded);
+            return;
+        }
+
         StudentDAO studentDAO = new StudentDAO();
         Student student = studentDAO.getStudentById(studentId);
 
         if (student != null) {
             request.setAttribute("student", student);
-            request.getRequestDispatcher("WEB-INF/views/update-student.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/update-student.jsp").forward(request, response);
         } else {
             request.setAttribute("errorMessage", "Student not found");
-            request.getRequestDispatcher("WEB-INF/views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
 

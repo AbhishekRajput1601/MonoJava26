@@ -11,6 +11,8 @@ import com.studentcourse.dao.CourseDAO;
 import com.studentcourse.model.Course;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @WebServlet("/editCourse")
 public class EditCourseServlet extends HttpServlet {
@@ -27,16 +29,31 @@ public class EditCourseServlet extends HttpServlet {
             return;
         }
 
-        int courseId = Integer.parseInt(request.getParameter("id"));
+        String idParam = request.getParameter("id");
+        if (idParam == null || idParam.trim().isEmpty()) {
+            String encoded = URLEncoder.encode("Invalid course ID.", StandardCharsets.UTF_8);
+            response.sendRedirect("viewCourses?error=" + encoded);
+            return;
+        }
+
+        int courseId;
+        try {
+            courseId = Integer.parseInt(idParam);
+        } catch (NumberFormatException e) {
+            String encoded = URLEncoder.encode("Invalid course ID.", StandardCharsets.UTF_8);
+            response.sendRedirect("viewCourses?error=" + encoded);
+            return;
+        }
+
         CourseDAO courseDAO = new CourseDAO();
         Course course = courseDAO.getCourseById(courseId);
 
         if (course != null) {
             request.setAttribute("course", course);
-            request.getRequestDispatcher("WEB-INF/views/update-course.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/update-course.jsp").forward(request, response);
         } else {
             request.setAttribute("errorMessage", "Course not found");
-            request.getRequestDispatcher("WEB-INF/views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
 }

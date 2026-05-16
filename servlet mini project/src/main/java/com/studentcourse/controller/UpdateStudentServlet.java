@@ -11,6 +11,8 @@ import com.studentcourse.dao.StudentDAO;
 import com.studentcourse.model.Student;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @WebServlet("/updateStudent")
 public class UpdateStudentServlet extends HttpServlet {
@@ -28,7 +30,22 @@ public class UpdateStudentServlet extends HttpServlet {
             return;
         }
 
-        int studentId = Integer.parseInt(request.getParameter("studentId"));
+        String studentIdParam = request.getParameter("studentId");
+        if (studentIdParam == null || studentIdParam.trim().isEmpty()) {
+            String encoded = URLEncoder.encode("Invalid student ID.", StandardCharsets.UTF_8);
+            response.sendRedirect("viewStudents?error=" + encoded);
+            return;
+        }
+
+        int studentId;
+        try {
+            studentId = Integer.parseInt(studentIdParam);
+        } catch (NumberFormatException e) {
+            String encoded = URLEncoder.encode("Invalid student ID.", StandardCharsets.UTF_8);
+            response.sendRedirect("viewStudents?error=" + encoded);
+            return;
+        }
+
         String studentName = request.getParameter("studentName");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
@@ -67,7 +84,7 @@ public class UpdateStudentServlet extends HttpServlet {
             Student student = studentDAO.getStudentById(studentId);
             request.setAttribute("student", student);
             request.setAttribute("errorMessage", errorMessage);
-            request.getRequestDispatcher("WEB-INF/views/update-student.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/update-student.jsp").forward(request, response);
             return;
         }
 
@@ -88,7 +105,7 @@ public class UpdateStudentServlet extends HttpServlet {
             Student fetchedStudent = dao.getStudentById(studentId);
             request.setAttribute("student", fetchedStudent);
             request.setAttribute("errorMessage", "Failed to update student. Please try again.");
-            request.getRequestDispatcher("WEB-INF/views/update-student.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/update-student.jsp").forward(request, response);
         }
     }
 

@@ -17,7 +17,7 @@ public class AddStudentServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         System.out.println("AddStudentServlet initialized");
     }
 
@@ -33,7 +33,7 @@ public class AddStudentServlet extends HttpServlet {
             return;
         }
 
-        request.getRequestDispatcher("WEB-INF/views/student-form.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/student-form.jsp").forward(request, response);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class AddStudentServlet extends HttpServlet {
 
         if (!errorMessage.isEmpty()) {
             request.setAttribute("errorMessage", errorMessage);
-            request.getRequestDispatcher("WEB-INF/views/student-form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/student-form.jsp").forward(request, response);
             return;
         }
 
@@ -100,7 +100,7 @@ public class AddStudentServlet extends HttpServlet {
             response.sendRedirect("viewStudents");
         } else {
             request.setAttribute("errorMessage", "Failed to add student. Please try again.");
-            request.getRequestDispatcher("WEB-INF/views/student-form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/student-form.jsp").forward(request, response);
         }
     }
 

@@ -17,7 +17,7 @@ public class AddCourseServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         System.out.println("AddCourseServlet initialized");
     }
 
@@ -33,7 +33,7 @@ public class AddCourseServlet extends HttpServlet {
             return;
         }
 
-        request.getRequestDispatcher("WEB-INF/views/course-form.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/course-form.jsp").forward(request, response);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class AddCourseServlet extends HttpServlet {
 
         if (!errorMessage.isEmpty()) {
             request.setAttribute("errorMessage", errorMessage);
-            request.getRequestDispatcher("WEB-INF/views/course-form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/course-form.jsp").forward(request, response);
             return;
         }
 
@@ -95,7 +95,7 @@ public class AddCourseServlet extends HttpServlet {
             response.sendRedirect("viewCourses");
         } else {
             request.setAttribute("errorMessage", "Failed to add course. Please try again.");
-            request.getRequestDispatcher("WEB-INF/views/course-form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/course-form.jsp").forward(request, response);
         }
     }
 

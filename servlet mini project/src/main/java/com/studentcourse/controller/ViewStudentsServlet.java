@@ -37,7 +37,7 @@ public class ViewStudentsServlet extends HttpServlet {
         if (errorMessage != null && !errorMessage.trim().isEmpty()) {
             request.setAttribute("errorMessage", errorMessage);
         }
-        request.getRequestDispatcher("WEB-INF/views/student-list.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/student-list.jsp").forward(request, response);
     }
 
     @Override

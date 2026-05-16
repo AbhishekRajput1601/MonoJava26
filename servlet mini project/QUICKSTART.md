@@ -3,12 +3,12 @@
 ## Step 1: Database Setup (5 minutes)
 
 1. Open MySQL client or terminal
-2. Run the commands in `database_setup.sql`:
+2. Run the commands in `src/main/resources/schema.sql`:
    ```sql
    CREATE DATABASE IF NOT EXISTS student_course_db;
    USE student_course_db;
    
-   -- [Copy all commands from database_setup.sql and execute]
+   -- [Copy all commands from src/main/resources/schema.sql and execute]
    ```
 
 ## Step 2: Configure Database Connection (2 minutes)
@@ -106,7 +106,8 @@ E:\MonoJava\servlet mini project/
 ├── pom.xml                           # Maven configuration
 ├── README.md                         # Full documentation
 ├── QUICKSTART.md                     # This file
-├── database_setup.sql                # SQL setup script
+├── src/main/resources/
+│   └── schema.sql                    # SQL setup script
 │
 ├── src/
 │   ├── main/
@@ -118,12 +119,10 @@ E:\MonoJava\servlet mini project/
 │   │   │
 │   │   └── webapp/
 │   │       ├── index.html            # Landing page
-│   │       ├── login.jsp             # Login page
 │   │       ├── css/style.css         # Stylesheet
 │   │       └── WEB-INF/
-│   │           ├── views/            # 10 JSP pages
+│   │           ├── views/            # Hidden JSP pages
 │   │           └── web.xml           # Web configuration
-│   │
 │   └── test/                         # Test folder (optional)
 │
 └── target/                           # Generated build files
@@ -187,7 +186,7 @@ E:\MonoJava\servlet mini project/
 ## Common Customizations
 
 ### Change Admin Username
-Edit `database_setup.sql`:
+Edit `src/main/resources/schema.sql`:
 ```sql
 INSERT INTO admin (username, password) VALUES ('your_username', 'your_password');
 ```

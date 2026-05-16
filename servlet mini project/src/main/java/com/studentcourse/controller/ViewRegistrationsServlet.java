@@ -36,7 +36,7 @@ public class ViewRegistrationsServlet extends HttpServlet {
         if (errorMessage != null && !errorMessage.trim().isEmpty()) {
             request.setAttribute("errorMessage", errorMessage);
         }
-        request.getRequestDispatcher("WEB-INF/views/registration-list.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/registration-list.jsp").forward(request, response);
     }
 }
 

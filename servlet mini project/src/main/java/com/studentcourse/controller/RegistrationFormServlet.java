@@ -23,7 +23,7 @@ public class RegistrationFormServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(RegistrationFormServlet.class.getName());
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         LOGGER.info("RegistrationFormServlet initialized");
     }
 
