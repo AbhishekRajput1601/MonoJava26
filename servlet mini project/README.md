@@ -90,6 +90,182 @@ src/main/resources/
 └── schema.sql
 ```
 
+## Class Diagram
+
+```mermaid
+classDiagram
+
+%% ─── MODEL LAYER ───────────────────────────────────────
+
+class Student {
+    -int studentId
+    -String studentName
+    -String email
+    -String phone
+    -int age
+    -String city
+    +Student()
+    +getStudentId() int
+    +setStudentId(int)
+    +getStudentName() String
+    +setStudentName(String)
+    +getEmail() String
+    +setEmail(String)
+    +getPhone() String
+    +setPhone(String)
+    +getAge() int
+    +setAge(int)
+    +getCity() String
+    +setCity(String)
+}
+
+class Course {
+    -int courseId
+    -String courseName
+    -String duration
+    -double fees
+    -String trainerName
+    +Course()
+    +getCourseId() int
+    +setCourseId(int)
+    +getCourseName() String
+    +setCourseName(String)
+    +getDuration() String
+    +setDuration(String)
+    +getFees() double
+    +setFees(double)
+    +getTrainerName() String
+    +setTrainerName(String)
+}
+
+class Admin {
+    -int adminId
+    -String username
+    -String password
+    +Admin()
+    +getAdminId() int
+    +setAdminId(int)
+    +getUsername() String
+    +setUsername(String)
+    +getPassword() String
+    +setPassword(String)
+}
+
+class Registration {
+    -int registrationId
+    -int studentId
+    -int courseId
+    -LocalDate registrationDate
+    -String status
+    -String studentName
+    -String courseName
+    +Registration()
+    +getRegistrationId() int
+    +setRegistrationId(int)
+    +getStudentId() int
+    +setStudentId(int)
+    +getCourseId() int
+    +setCourseId(int)
+    +getRegistrationDate() LocalDate
+    +setRegistrationDate(LocalDate)
+    +getStatus() String
+    +setStatus(String)
+    +getStudentName() String
+    +setStudentName(String)
+    +getCourseName() String
+    +setCourseName(String)
+}
+
+%% ─── EXCEPTION LAYER ────────────────────────────────────
+
+class Exception {
+    <<Java>>
+}
+
+class DuplicateActiveRegistrationException {
+    <<exception>>
+    +DuplicateActiveRegistrationException(String message)
+    +DuplicateActiveRegistrationException(String message, Throwable cause)
+}
+
+%% ─── UTILITY LAYER ──────────────────────────────────────
+
+class DBConnection {
+    <<utility>>
+    -String DRIVER_CLASS
+    -String DB_URL
+    -String DB_USER
+    -String DB_PASSWORD
+    +getConnection() Connection
+}
+
+%% ─── DAO LAYER ───────────────────────────────────────────
+
+class StudentDAO {
+    <<dao>>
+    -Logger LOGGER
+    +addStudent(Student) boolean
+    +getAllStudents() List~Student~
+    +getStudentById(int) Student
+    +updateStudent(Student) boolean
+    +deleteStudent(int) boolean
+    +getTotalStudents() int
+}
+
+class CourseDAO {
+    <<dao>>
+    -Logger LOGGER
+    +addCourse(Course) boolean
+    +getAllCourses() List~Course~
+    +getCourseById(int) Course
+    +updateCourse(Course) boolean
+    +deleteCourse(int) boolean
+    +getTotalCourses() int
+}
+
+class AdminDAO {
+    <<dao>>
+    -Logger LOGGER
+    +validateAdmin(String, String) Admin
+    +getAdminByUsername(String) Admin
+}
+
+class RegistrationDAO {
+    <<dao>>
+    -Logger LOGGER
+    +registerStudentToCourse(int, int) boolean
+    +registerStudentToCourse(int, int, LocalDate, String) boolean
+    +getAllRegistrations() List~Registration~
+    +getRegistrationById(int) Registration
+    +updateRegistrationStatus(int, String) boolean
+    +deleteRegistration(int) boolean
+    +getTotalRegistrations() int
+    +hasActiveRegistration(int, int) boolean
+    +hasAnyRegistrationForStudent(int) boolean
+    +hasActiveRegistrationForCourse(int) boolean
+}
+
+%% ─── RELATIONSHIPS ───────────────────────────────────────
+
+Student "1" --> "*" Registration : references
+Course "1" --> "*" Registration : references
+
+DuplicateActiveRegistrationException --|> Exception
+
+StudentDAO ..> Student : uses
+StudentDAO ..> DBConnection : uses
+
+CourseDAO ..> Course : uses
+CourseDAO ..> DBConnection : uses
+
+AdminDAO ..> Admin : uses
+AdminDAO ..> DBConnection : uses
+
+RegistrationDAO ..> Registration : uses
+RegistrationDAO ..> DBConnection : uses
+RegistrationDAO ..> DuplicateActiveRegistrationException : throws
+```
+
 ## Setup Instructions
 
 ### 1. Database Setup
@@ -310,7 +486,7 @@ Used after successful operations:
 
 ### Logging
 All DAOs use `java.util.logging.Logger` instead of printStackTrace():
-```java
+```text
 LOGGER.log(Level.SEVERE, "Database error description", exception);
 ```
 

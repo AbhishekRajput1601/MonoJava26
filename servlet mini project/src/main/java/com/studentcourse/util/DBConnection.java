@@ -3,6 +3,7 @@ package com.studentcourse.util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 public class DBConnection {
     private static final String DRIVER_CLASS = "com.mysql.cj.jdbc.Driver";
@@ -14,7 +15,7 @@ public class DBConnection {
         try {
             Class.forName(DRIVER_CLASS);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            Logger.getLogger(DBConnection.class.getName()).severe("Database Driver not found: " + e.getMessage());
         }
     }
 
