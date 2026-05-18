@@ -35,27 +35,6 @@ public class AdminDAO {
         }
         return admin;
     }
-
-    public Admin getAdminByUsername(String username) {
-        Admin admin = null;
-        try (Connection conn = DBConnection.getConnection()) {
-            String query = "SELECT * FROM admin WHERE username = ?";
-            PreparedStatement pst = conn.prepareStatement(query);
-            pst.setString(1, username);
-            ResultSet rs = pst.executeQuery();
-
-            if (rs.next()) {
-                admin = new Admin();
-                admin.setAdminId(rs.getInt("admin_id"));
-                admin.setUsername(rs.getString("username"));
-                admin.setPassword(rs.getString("password"));
-            }
-            rs.close();
-            pst.close();
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Database error fetching admin by username", e);
-        }
-        return admin;
-    }
+    
 }
 

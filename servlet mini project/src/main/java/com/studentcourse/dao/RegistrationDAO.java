@@ -18,19 +18,15 @@ import java.util.List;
 public class RegistrationDAO {
     private static final Logger LOGGER = Logger.getLogger(RegistrationDAO.class.getName());
 
-    public boolean registerStudentToCourse(int studentId, int courseId) throws com.studentcourse.exception.DuplicateActiveRegistrationException {
-        return registerStudentToCourse(studentId, courseId, LocalDate.now(), "Active");
-    }
-
     public boolean registerStudentToCourse(int studentId, int courseId, LocalDate registrationDate, String status) throws com.studentcourse.exception.DuplicateActiveRegistrationException {
         if (hasActiveRegistration(studentId, courseId) && "Active".equals(status)) {
             return false;
         }
 
         boolean isRegistered = false;
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "INSERT INTO registrations (student_id, course_id, registration_date, status) VALUES (?, ?, ?, ?)";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             pst.setInt(1, studentId);
             pst.setInt(2, courseId);
             pst.setDate(3, Date.valueOf(registrationDate));
@@ -50,8 +46,8 @@ public class RegistrationDAO {
 
     public boolean hasActiveRegistration(int studentId, int courseId) {
         String query = "SELECT COUNT(*) as count FROM registrations WHERE student_id = ? AND course_id = ? AND status = 'Active'";
-        try (Connection conn = DBConnection.getConnection()) {
-            PreparedStatement pst = conn.prepareStatement(query);
+        try (Connection connection = DBConnection.getConnection()) {
+            PreparedStatement pst = connection.prepareStatement(query);
             pst.setInt(1, studentId);
             pst.setInt(2, courseId);
             ResultSet rs = pst.executeQuery();
@@ -67,8 +63,8 @@ public class RegistrationDAO {
 
     public boolean hasAnyRegistrationForStudent(int studentId) {
         String query = "SELECT COUNT(*) as count FROM registrations WHERE student_id = ?";
-        try (Connection conn = DBConnection.getConnection()) {
-            PreparedStatement pst = conn.prepareStatement(query);
+        try (Connection connection = DBConnection.getConnection()) {
+            PreparedStatement pst = connection.prepareStatement(query);
             pst.setInt(1, studentId);
             ResultSet rs = pst.executeQuery();
             boolean exists = rs.next() && rs.getInt("count") > 0;
@@ -83,8 +79,8 @@ public class RegistrationDAO {
 
     public boolean hasActiveRegistrationForCourse(int courseId) {
         String query = "SELECT COUNT(*) as count FROM registrations WHERE course_id = ? AND status = 'Active'";
-        try (Connection conn = DBConnection.getConnection()) {
-            PreparedStatement pst = conn.prepareStatement(query);
+        try (Connection connection = DBConnection.getConnection()) {
+            PreparedStatement pst = connection.prepareStatement(query);
             pst.setInt(1, courseId);
             ResultSet rs = pst.executeQuery();
             boolean exists = rs.next() && rs.getInt("count") > 0;
@@ -99,8 +95,8 @@ public class RegistrationDAO {
 
     private boolean hasActiveRegistrationExcludingId(int studentId, int courseId, int registrationId) {
         String query = "SELECT COUNT(*) as count FROM registrations WHERE student_id = ? AND course_id = ? AND status = 'Active' AND registration_id <> ?";
-        try (Connection conn = DBConnection.getConnection()) {
-            PreparedStatement pst = conn.prepareStatement(query);
+        try (Connection connection = DBConnection.getConnection()) {
+            PreparedStatement pst = connection.prepareStatement(query);
             pst.setInt(1, studentId);
             pst.setInt(2, courseId);
             pst.setInt(3, registrationId);
@@ -117,11 +113,11 @@ public class RegistrationDAO {
 
     public List<Registration> getAllRegistrations() {
         List<Registration> registrationList = new ArrayList<>();
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "SELECT r.*, s.student_name, c.course_name FROM registrations r " +
                     "JOIN students s ON r.student_id = s.student_id " +
                     "JOIN courses c ON r.course_id = c.course_id";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             ResultSet rs = pst.executeQuery();
 
             while (rs.next()) {
@@ -145,12 +141,12 @@ public class RegistrationDAO {
 
     public Registration getRegistrationById(int registrationId) {
         Registration registration = null;
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "SELECT r.*, s.student_name, c.course_name FROM registrations r " +
                     "JOIN students s ON r.student_id = s.student_id " +
                     "JOIN courses c ON r.course_id = c.course_id " +
                     "WHERE r.registration_id = ?";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             pst.setInt(1, registrationId);
             ResultSet rs = pst.executeQuery();
 
@@ -183,9 +179,9 @@ public class RegistrationDAO {
         }
 
         boolean isUpdated = false;
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "UPDATE registrations SET status = ? WHERE registration_id = ?";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             pst.setString(1, status);
             pst.setInt(2, registrationId);
 
@@ -200,9 +196,9 @@ public class RegistrationDAO {
 
     public boolean deleteRegistration(int registrationId) {
         boolean isDeleted = false;
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "DELETE FROM registrations WHERE registration_id = ?";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             pst.setInt(1, registrationId);
 
             int rows = pst.executeUpdate();
@@ -216,9 +212,9 @@ public class RegistrationDAO {
 
     public int getTotalRegistrations() {
         int total = 0;
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "SELECT COUNT(*) as count FROM registrations";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             ResultSet rs = pst.executeQuery();
 
             if (rs.next()) {

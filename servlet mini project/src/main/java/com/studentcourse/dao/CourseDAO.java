@@ -17,9 +17,9 @@ public class CourseDAO {
 
     public boolean addCourse(Course course) {
         boolean isAdded = false;
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "INSERT INTO courses (course_name, duration, fees, trainer_name) VALUES (?, ?, ?, ?)";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             pst.setString(1, course.getCourseName());
             pst.setString(2, course.getDuration());
             pst.setDouble(3, course.getFees());
@@ -36,9 +36,9 @@ public class CourseDAO {
 
     public List<Course> getAllCourses() {
         List<Course> courseList = new ArrayList<>();
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "SELECT * FROM courses";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             ResultSet rs = pst.executeQuery();
 
             while (rs.next()) {
@@ -60,9 +60,9 @@ public class CourseDAO {
 
     public Course getCourseById(int courseId) {
         Course course = null;
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "SELECT * FROM courses WHERE course_id = ?";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             pst.setInt(1, courseId);
             ResultSet rs = pst.executeQuery();
 
@@ -84,9 +84,9 @@ public class CourseDAO {
 
     public boolean updateCourse(Course course) {
         boolean isUpdated = false;
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "UPDATE courses SET course_name = ?, duration = ?, fees = ?, trainer_name = ? WHERE course_id = ?";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             pst.setString(1, course.getCourseName());
             pst.setString(2, course.getDuration());
             pst.setDouble(3, course.getFees());
@@ -109,9 +109,9 @@ public class CourseDAO {
         }
 
         boolean isDeleted = false;
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "DELETE FROM courses WHERE course_id = ?";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             pst.setInt(1, courseId);
 
             int rows = pst.executeUpdate();
@@ -125,9 +125,9 @@ public class CourseDAO {
 
     public int getTotalCourses() {
         int total = 0;
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "SELECT COUNT(*) as count FROM courses";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             ResultSet rs = pst.executeQuery();
 
             if (rs.next()) {

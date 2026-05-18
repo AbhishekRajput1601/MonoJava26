@@ -17,9 +17,9 @@ public class StudentDAO {
 
     public boolean addStudent(Student student) {
         boolean isAdded = false;
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "INSERT INTO students (student_name, email, phone, age, city) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             pst.setString(1, student.getStudentName());
             pst.setString(2, student.getEmail());
             pst.setString(3, student.getPhone());
@@ -37,9 +37,9 @@ public class StudentDAO {
 
     public List<Student> getAllStudents() {
         List<Student> studentList = new ArrayList<>();
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "SELECT * FROM students";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             ResultSet rs = pst.executeQuery();
 
             while (rs.next()) {
@@ -62,9 +62,9 @@ public class StudentDAO {
 
     public Student getStudentById(int studentId) {
         Student student = null;
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "SELECT * FROM students WHERE student_id = ?";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             pst.setInt(1, studentId);
             ResultSet rs = pst.executeQuery();
 
@@ -87,9 +87,9 @@ public class StudentDAO {
 
     public boolean updateStudent(Student student) {
         boolean isUpdated = false;
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "UPDATE students SET student_name = ?, email = ?, phone = ?, age = ?, city = ? WHERE student_id = ?";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             pst.setString(1, student.getStudentName());
             pst.setString(2, student.getEmail());
             pst.setString(3, student.getPhone());
@@ -113,9 +113,9 @@ public class StudentDAO {
         }
 
         boolean isDeleted = false;
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "DELETE FROM students WHERE student_id = ?";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             pst.setInt(1, studentId);
 
             int rows = pst.executeUpdate();
@@ -129,9 +129,9 @@ public class StudentDAO {
 
     public int getTotalStudents() {
         int total = 0;
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             String query = "SELECT COUNT(*) as count FROM students";
-            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst = connection.prepareStatement(query);
             ResultSet rs = pst.executeQuery();
 
             if (rs.next()) {
