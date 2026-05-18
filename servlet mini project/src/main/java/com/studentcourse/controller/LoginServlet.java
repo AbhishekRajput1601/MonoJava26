@@ -38,36 +38,30 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         String rememberMe = request.getParameter("rememberMe");
 
-        // Validation
         if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty()) {
             request.setAttribute("errorMessage", "Username and password are required");
             request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
             return;
         }
 
-        // Authenticate
         AdminDAO adminDAO = new AdminDAO();
         Admin admin = adminDAO.validateAdmin(username, password);
 
         if (admin != null) {
-            // Create session
             HttpSession session = request.getSession(true);
             session.setAttribute("loggedInUser", admin.getUsername());
             session.setAttribute("loginTime", System.currentTimeMillis());
 
-            // Handle remember me cookie
             if ("on".equalsIgnoreCase(rememberMe)) {
                 Cookie usernameCookie = new Cookie("rememberedUsername", username);
                 usernameCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
                 response.addCookie(usernameCookie);
             } else {
-                // Delete cookie if unchecked
                 Cookie deleteCookie = new Cookie("rememberedUsername", "");
                 deleteCookie.setMaxAge(0);
                 response.addCookie(deleteCookie);
             }
 
-            // Redirect to dashboard
             response.sendRedirect(request.getContextPath() + "/dashboard");
         } else {
             request.setAttribute("errorMessage", "Invalid username or password");

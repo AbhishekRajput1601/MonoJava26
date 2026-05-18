@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpSession;
 import com.studentcourse.dao.RegistrationDAO;
 import com.studentcourse.dao.StudentDAO;
 import com.studentcourse.dao.CourseDAO;
+import com.studentcourse.util.ValidationUtil;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -48,13 +49,22 @@ public class RegisterStudentCourseServlet extends HttpServlet {
             errorMessage += "Student must be selected. ";
         }
         if (courseIdStr == null || courseIdStr.isEmpty()) {
-            errorMessage += "Course must be selected.";
+            errorMessage += "Course must be selected. ";
         }
         if (registrationDateStr == null || registrationDateStr.trim().isEmpty()) {
-            errorMessage += " Registration date is required.";
+            errorMessage += "Registration date is required. ";
+        } else {
+            try {
+                LocalDate regDate = LocalDate.parse(registrationDateStr);
+                if (!ValidationUtil.isValidRegistrationDate(regDate)) {
+                    errorMessage += "Registration date cannot be in the future. ";
+                }
+            } catch (DateTimeParseException e) {
+                errorMessage += "Invalid registration date format. ";
+            }
         }
         if (!("Active".equals(status) || "Completed".equals(status) || "Cancelled".equals(status))) {
-            errorMessage += " Invalid status selected.";
+            errorMessage += "Invalid status selected.";
         }
 
         if (!errorMessage.isEmpty()) {

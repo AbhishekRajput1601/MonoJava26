@@ -27,14 +27,12 @@ public class DashboardServlet extends HttpServlet {
             throws ServletException, IOException {
         System.out.println("Dashboard GET request received");
 
-        // Check session
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("loggedInUser") == null) {
             response.sendRedirect("login");
             return;
         }
 
-        // Fetch dashboard data
         StudentDAO studentDAO = new StudentDAO();
         CourseDAO courseDAO = new CourseDAO();
         RegistrationDAO registrationDAO = new RegistrationDAO();

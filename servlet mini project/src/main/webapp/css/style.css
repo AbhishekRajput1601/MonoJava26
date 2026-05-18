@@ -581,3 +581,252 @@ h2 {
     margin-bottom: 15px;
 }
 
+
+/* Modern Theme Overrides */
+:root {
+    --bg: #f4f7ff;
+    --surface: #ffffff;
+    --surface-2: #f8faff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --primary: #4f46e5;
+    --primary-strong: #4338ca;
+    --accent: #06b6d4;
+    --danger: #dc2626;
+    --success: #16a34a;
+    --border: #e5e7eb;
+    --shadow-sm: 0 8px 20px rgba(15, 23, 42, 0.07);
+    --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.12);
+    --radius: 14px;
+}
+
+body {
+    background:
+        radial-gradient(circle at 0 0, rgba(79, 70, 229, 0.08) 0, transparent 35%),
+        radial-gradient(circle at 100% 0, rgba(6, 182, 212, 0.08) 0, transparent 30%),
+        var(--bg);
+    color: var(--text);
+}
+
+.container {
+    margin: 28px auto;
+}
+
+.navbar {
+    background: linear-gradient(120deg, #4338ca 0%, #4f46e5 50%, #0ea5e9 100%);
+    border-radius: 0 0 16px 16px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 24px;
+}
+
+.navbar-brand {
+    letter-spacing: 0.2px;
+}
+
+.welcome-text {
+    font-size: 13px;
+    opacity: 0.95;
+}
+
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.16);
+}
+
+.btn-primary {
+    background: linear-gradient(120deg, var(--primary) 0%, #6366f1 100%);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(120deg, var(--primary-strong) 0%, #4f46e5 100%);
+}
+
+.btn-secondary {
+    background: #4b5563;
+}
+
+.btn-secondary:hover {
+    background: #374151;
+}
+
+.btn-logout,
+.btn-delete {
+    box-shadow: 0 6px 16px rgba(220, 38, 38, 0.2);
+}
+
+.btn-edit {
+    background: linear-gradient(120deg, #16a34a 0%, #22c55e 100%);
+    box-shadow: 0 6px 16px rgba(22, 163, 74, 0.2);
+}
+
+.btn-edit:hover {
+    background: linear-gradient(120deg, #15803d 0%, #16a34a 100%);
+}
+
+.login-container,
+.landing-container {
+    background: linear-gradient(135deg, #312e81 0%, #4338ca 45%, #0ea5e9 100%);
+}
+
+.login-box,
+.form-container,
+.table-container,
+.dashboard-menu,
+.stat-card,
+.empty-message,
+.error-container {
+    border: 1px solid rgba(229, 231, 235, 0.8);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+}
+
+.login-box,
+.form-container,
+.dashboard-menu,
+.table-container {
+    background: linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+}
+
+.login-box h1,
+.form-container h1,
+.dashboard-menu h2,
+.menu-section h3,
+.stat-number,
+h1 {
+    color: var(--primary);
+}
+
+h1 {
+    border-bottom-color: rgba(79, 70, 229, 0.28);
+}
+
+.dashboard-stats {
+    gap: 24px;
+}
+
+.stat-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(79, 70, 229, 0.06), rgba(6, 182, 212, 0.05));
+    pointer-events: none;
+}
+
+.stat-label {
+    color: var(--muted);
+}
+
+.stat-link {
+    color: var(--primary-strong);
+}
+
+.menu-section h3 {
+    border-bottom: 2px solid rgba(79, 70, 229, 0.25);
+}
+
+.menu-section ul li a {
+    color: #374151;
+}
+
+.menu-section ul li a:hover {
+    color: var(--primary);
+}
+
+.form-group label {
+    color: #374151;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+    border-radius: 10px;
+    border-color: #d1d5db;
+    background-color: #fff;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: rgba(79, 70, 229, 0.7);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.14);
+}
+
+.error-message,
+.success-message {
+    border-radius: 10px;
+}
+
+.error-message {
+    border-color: #fecaca;
+    background-color: #fef2f2;
+    color: #991b1b;
+}
+
+.success-message {
+    border-color: #bbf7d0;
+    background-color: #f0fdf4;
+    color: #166534;
+}
+
+.data-table thead {
+    background: linear-gradient(120deg, #4338ca 0%, #4f46e5 100%);
+}
+
+.data-table th {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.data-table td {
+    border-bottom: 1px solid #edf2f7;
+}
+
+.data-table tbody tr:nth-child(even) {
+    background-color: #fafbff;
+}
+
+.data-table tbody tr:hover {
+    background-color: #eff6ff;
+}
+
+.badge {
+    border-radius: 999px;
+    padding: 6px 12px;
+}
+
+.page-actions {
+    margin-bottom: 18px;
+}
+
+.default-creds {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #f8fafc;
+}
+
+.footer {
+    background: linear-gradient(120deg, #1f2937 0%, #111827 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        border-radius: 0;
+    }
+
+    .form-container,
+    .dashboard-menu,
+    .table-container,
+    .login-box {
+        padding: 22px;
+    }
+}
+
+

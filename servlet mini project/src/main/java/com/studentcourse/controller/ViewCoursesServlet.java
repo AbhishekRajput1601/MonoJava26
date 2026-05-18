@@ -22,7 +22,6 @@ public class ViewCoursesServlet extends HttpServlet {
             throws ServletException, IOException {
         System.out.println("ViewCourses GET request received");
         
-        // Check session
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("loggedInUser") == null) {
             response.sendRedirect("login");

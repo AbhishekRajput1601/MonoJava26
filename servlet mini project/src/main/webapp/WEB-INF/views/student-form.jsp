@@ -32,7 +32,9 @@
             <form method="POST" action="${pageContext.request.contextPath}/addStudent" class="data-form">
                 <div class="form-group">
                     <label for="studentName">Student Name:</label>
-                    <input type="text" id="studentName" name="studentName" required>
+                    <input type="text" id="studentName" name="studentName" required
+                           pattern="[a-zA-Z\s]+"
+                           title="Student name must contain letters only">
                 </div>
 
                 <div class="form-group">
@@ -42,12 +44,16 @@
 
                 <div class="form-group">
                     <label for="phone">Phone:</label>
-                    <input type="text" id="phone" name="phone" required>
+                    <input type="text" id="phone" name="phone" required
+                           pattern="[\d\s\-]{10,}"
+                           title="Please enter a valid 10-digit phone number">
                 </div>
 
                 <div class="form-group">
                     <label for="age">Age:</label>
-                    <input type="number" id="age" name="age" required>
+                    <input type="number" id="age" name="age" required
+                           min="18"
+                           title="Age must be 18 or above">
                 </div>
 
                 <div class="form-group">

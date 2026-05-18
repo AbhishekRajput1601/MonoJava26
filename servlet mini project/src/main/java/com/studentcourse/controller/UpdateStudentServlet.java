@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 
 import com.studentcourse.dao.StudentDAO;
 import com.studentcourse.model.Student;
+import com.studentcourse.util.ValidationUtil;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -23,7 +24,6 @@ public class UpdateStudentServlet extends HttpServlet {
             throws ServletException, IOException {
         System.out.println("UpdateStudent POST request received");
         
-        // Check session
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("loggedInUser") == null) {
             response.sendRedirect("login");
@@ -52,28 +52,26 @@ public class UpdateStudentServlet extends HttpServlet {
         String ageStr = request.getParameter("age");
         String city = request.getParameter("city");
 
-        // Validation
         String errorMessage = "";
         if (studentName == null || studentName.trim().isEmpty()) {
             errorMessage += "Student name is required. ";
+        } else if (!ValidationUtil.isValidStudentName(studentName)) {
+            errorMessage += "Student name must contain letters only. ";
         }
         if (email == null || email.trim().isEmpty()) {
             errorMessage += "Email is required. ";
+        } else if (!ValidationUtil.isValidEmail(email)) {
+            errorMessage += "Please enter a valid email address. ";
         }
         if (phone == null || phone.trim().isEmpty()) {
             errorMessage += "Phone is required. ";
+        } else if (!ValidationUtil.isValidPhoneNumber(phone)) {
+            errorMessage += "Please enter a valid 10-digit phone number. ";
         }
         if (ageStr == null || ageStr.trim().isEmpty()) {
             errorMessage += "Age is required. ";
-        } else {
-            try {
-                int age = Integer.parseInt(ageStr);
-                if (age < 18) {
-                    errorMessage += "Age must be 18 or above. ";
-                }
-            } catch (NumberFormatException e) {
-                errorMessage += "Age must be a valid number. ";
-            }
+        } else if (!ValidationUtil.isValidAge(ageStr)) {
+            errorMessage += "Age must be a number and at least 18. ";
         }
         if (city == null || city.trim().isEmpty()) {
             errorMessage += "City is required.";
@@ -88,7 +86,6 @@ public class UpdateStudentServlet extends HttpServlet {
             return;
         }
 
-        // Update student
         Student student = new Student();
         student.setStudentId(studentId);
         student.setStudentName(studentName);

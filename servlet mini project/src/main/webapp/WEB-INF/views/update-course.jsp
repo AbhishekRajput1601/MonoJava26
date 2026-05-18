@@ -45,17 +45,24 @@
 
                     <div class="form-group">
                         <label for="duration">Duration:</label>
-                        <input type="text" id="duration" name="duration" required value="<%= course.getDuration() %>">
+                        <input type="number" id="duration" name="duration" required value="<%= course.getDuration() %>"
+                               min="0.1"
+                               step="0.1"
+                               title="Duration must be greater than 0">
                     </div>
 
                     <div class="form-group">
                         <label for="fees">Fees:</label>
-                        <input type="number" id="fees" name="fees" step="0.01" required value="<%= course.getFees() %>">
+                        <input type="number" id="fees" name="fees" step="0.01" required value="<%= course.getFees() %>"
+                               min="0.01"
+                               title="Fees must be greater than 0">
                     </div>
 
                     <div class="form-group">
                         <label for="trainerName">Trainer Name:</label>
-                        <input type="text" id="trainerName" name="trainerName" required value="<%= course.getTrainerName() %>">
+                        <input type="text" id="trainerName" name="trainerName" required value="<%= course.getTrainerName() %>"
+                               pattern="[a-zA-Z\s]+"
+                               title="Trainer name must contain letters only">
                     </div>
 
                     <div class="form-actions">

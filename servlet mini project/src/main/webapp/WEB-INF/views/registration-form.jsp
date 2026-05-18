@@ -78,6 +78,7 @@
                 <div class="form-group">
                     <label for="registrationDate">Registration Date:</label>
                     <input type="date" id="registrationDate" name="registrationDate" required
+                           max="<%= java.time.LocalDate.now() %>"
                            value="<%= selectedRegistrationDate != null && !selectedRegistrationDate.isEmpty() ? selectedRegistrationDate : defaultRegistrationDate %>">
                 </div>
 

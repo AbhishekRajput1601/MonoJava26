@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 
 import com.studentcourse.dao.CourseDAO;
 import com.studentcourse.model.Course;
+import com.studentcourse.util.ValidationUtil;
 
 import java.io.IOException;
 
@@ -26,7 +27,6 @@ public class AddCourseServlet extends HttpServlet {
             throws ServletException, IOException {
         System.out.println("AddCourse GET request received");
 
-        // Check session
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("loggedInUser") == null) {
             response.sendRedirect("login");
@@ -41,7 +41,6 @@ public class AddCourseServlet extends HttpServlet {
             throws ServletException, IOException {
         System.out.println("AddCourse POST request received");
 
-        // Check session
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("loggedInUser") == null) {
             response.sendRedirect("login");
@@ -53,28 +52,24 @@ public class AddCourseServlet extends HttpServlet {
         String feesStr = request.getParameter("fees");
         String trainerName = request.getParameter("trainerName");
 
-        // Validation
         String errorMessage = "";
         if (courseName == null || courseName.trim().isEmpty()) {
             errorMessage += "Course name is required. ";
         }
         if (duration == null || duration.trim().isEmpty()) {
             errorMessage += "Duration is required. ";
+        } else if (!ValidationUtil.isValidDuration(duration)) {
+            errorMessage += "Duration must be greater than 0. ";
         }
         if (feesStr == null || feesStr.trim().isEmpty()) {
             errorMessage += "Fees is required. ";
-        } else {
-            try {
-                double fees = Double.parseDouble(feesStr);
-                if (fees <= 0) {
-                    errorMessage += "Fees must be greater than 0. ";
-                }
-            } catch (NumberFormatException e) {
-                errorMessage += "Fees must be a valid number. ";
-            }
+        } else if (!ValidationUtil.isValidFees(feesStr)) {
+            errorMessage += "Fees must be greater than 0. ";
         }
         if (trainerName == null || trainerName.trim().isEmpty()) {
-            errorMessage += "Trainer name is required.";
+            errorMessage += "Trainer name is required. ";
+        } else if (!ValidationUtil.isValidTrainerName(trainerName)) {
+            errorMessage += "Trainer name must contain letters only.";
         }
 
         if (!errorMessage.isEmpty()) {
@@ -83,7 +78,6 @@ public class AddCourseServlet extends HttpServlet {
             return;
         }
 
-        // Add course
         Course course = new Course();
         course.setCourseName(courseName);
         course.setDuration(duration);
