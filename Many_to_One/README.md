@@ -2,38 +2,32 @@
 
 A Spring Boot REST API demonstrating a **one-to-many** relationship between `Department` and `Employee`.
 
-## Features
+This README provides setup, run, testing, and troubleshooting instructions so you can run and evaluate the project against the supplied spec.
 
-- Create a department with multiple employees
-- View all departments
-- View department by ID
-- View departments with pagination
-- Update department details and employee list
-- Delete a department and its employees
-- Prevent duplicate department names
-- Prevent duplicate employee emails
-- Validate request data with Jakarta Validation
-- Global exception handling
-- Basic authentication with role-based access
+## Highlights
+
+- One Department can have many Employees (JPA one-to-many)
+- DTO-based API (no entity is returned directly)
+- Validation with Jakarta Validation
+- Global exception handling with standardized error shapes
+- Role-based Basic Authentication (admin / user)
 - Swagger/OpenAPI documentation
-- Logging with SLF4J + Lombok
 
 ## Tech Stack
 
-- Java
-- Spring Boot
-- Spring Data JPA / Hibernate
+- Java, Spring Boot
+- Spring Data JPA (Hibernate)
 - MySQL
-- Spring Security
-- Swagger / OpenAPI
-- Lombok
-- ModelMapper
+- Spring Security (Basic Auth)
+- Springdoc OpenAPI (Swagger)
+- Lombok, ModelMapper
 - Maven
 
-## Project Package Structure
+## Project Package Structure (after refactor)
 
-```text
-src/main/java/org/abhishek/many_to_one
+```
+src/main/java/com/swabhav/demo
+├── DemoApplication.java
 ├── config
 ├── controller
 ├── dto
@@ -43,18 +37,35 @@ src/main/java/org/abhishek/many_to_one
 └── service
 ```
 
-## Database
+> Note: package root is `com.swabhav.demo` to match the project specification.
 
-- **Database name:** `one_to_many_demo`
-- **Tables:** `departments`, `employees`
+## Prerequisites
 
-## Configuration
+- Java 17+ (or the Java version used by the project)
+- Maven
+- MySQL server
 
-Update `src/main/resources/application.properties` with your MySQL credentials.
+## Database setup
 
-Example:
+1. Start MySQL and create the database used by the project:
 
-```properties
+```sql
+CREATE DATABASE one_to_many_demo CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+2. (Optional) Create a DB user and grant privileges:
+
+```sql
+CREATE USER 'demo'@'localhost' IDENTIFIED BY 'demo_pass';
+GRANT ALL PRIVILEGES ON one_to_many_demo.* TO 'demo'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+3. Update `src/main/resources/application.properties` with your DB URL, username, and password.
+
+Example `application.properties` (minimal required settings):
+
+```
 spring.datasource.url=jdbc:mysql://localhost:3306/one_to_many_demo
 spring.datasource.username=root
 spring.datasource.password=your_password
@@ -65,132 +76,146 @@ server.port=8080
 springdoc.swagger-ui.path=/swagger-ui.html
 ```
 
-## Default Users
+## Build and run (Windows PowerShell)
 
-| Username | Password | Role |
-|----------|----------|------|
-| admin    | admin123 | ADMIN |
-| user     | user123  | USER  |
+From the project root (`E:\\MonoJava\\Many_to_One`):
 
-## API Security Rules
+```powershell
+# Build
+mvnw.cmd clean package
 
-- `GET /api/departments/**` → `USER` or `ADMIN`
-- `POST /api/departments/**` → `ADMIN` only
-- `PUT /api/departments/**` → `ADMIN` only
-- `DELETE /api/departments/**` → `ADMIN` only
+# Run
+mvnw.cmd spring-boot:run
 
-## Swagger
+# Or run the jar
+java -jar target\\\\*.jar
+```
 
-- Swagger UI: `http://localhost:8080/swagger-ui.html`
-- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+## Default Users (in-memory)
 
-Swagger supports **Basic Authentication**.
+| Username | Password | Role   |
+|----------|----------|--------|
+| admin    | admin123 | ADMIN  |
+| user     | user123  | USER   |
 
-## Main Endpoints
+The `ADMIN` user can create, update, and delete departments. The `USER` can only read.
 
-### Department APIs
+## API Quick Reference
 
-- `POST /api/departments`
-- `GET /api/departments`
-- `GET /api/departments/page?pageNumber=0&pageSize=5`
-- `GET /api/departments/{id}`
-- `PUT /api/departments/{id}`
-- `DELETE /api/departments/{id}`
+Base URL: `http://localhost:8080/api/departments`
 
-## Request Format
+- POST    /api/departments           (ADMIN)  — Create department with employees
+- GET     /api/departments           (USER/ADMIN) — List all departments
+- GET     /api/departments/page      (USER/ADMIN) — Paginated list (query: pageNumber, pageSize)
+- GET     /api/departments/{id}      (USER/ADMIN) — Get department by ID
+- PUT     /api/departments/{id}      (ADMIN)  — Update department and employees
+- DELETE  /api/departments/{id}      (ADMIN)  — Delete department (employees removed)
 
-### Create / Update Department
+### Sample Create Request
 
 ```json
 {
   "department_name": "Engineering",
-  "location": "Pune",
+  "location": "Mumbai",
   "employees": [
-    {
-      "employee_name": "Rahul Sharma",
-      "email": "rahul@example.com",
-      "salary": 50000
-    },
-    {
-      "employee_name": "Priya Mehta",
-      "email": "priya@example.com",
-      "salary": 55000
-    }
+    { "employee_name": "Rahul Sharma", "email": "rahul@example.com", "salary": 50000 },
+    { "employee_name": "Priya Mehta",   "email": "priya@example.com",  "salary": 48000 }
   ]
 }
 ```
 
-## Response Format
-
-### Department Response
+### Expected Department Response
 
 ```json
 {
   "id": 1,
   "department_name": "Engineering",
-  "location": "Pune",
+  "location": "Mumbai",
   "employees": [
-    {
-      "id": 1,
-      "employee_name": "Rahul Sharma",
-      "email": "rahul@example.com",
-      "salary": 50000
-    }
+    { "id": 1, "employee_name": "Rahul Sharma", "email": "rahul@example.com", "salary": 50000 }
   ]
 }
 ```
 
-### Pagination Response
+## Pagination rules & validation
+
+- Default: `pageNumber=0`, `pageSize=5`
+- Validation rules enforced:
+  - `pageNumber` must be >= 0
+  - `pageSize` must be > 0 and <= 100
+
+Invalid pagination parameters will return `400 Bad Request` with a descriptive message.
+
+## Error and Validation Responses
+
+- Standard error shape for non-validation errors:
 
 ```json
 {
-  "content": [],
-  "pageNumber": 0,
-  "pageSize": 5,
-  "totalElements": 0,
-  "totalPages": 0,
-  "lastPage": true
+  "timestamp": "2026-06-02T12:34:56.789Z",
+  "status": 404,
+  "error": "Not Found",
+  "message": "Department with id 99 not found"
 }
 ```
 
-## Build and Run
+- Validation errors return a `messages` list (400 Bad Request):
 
-### 1. Create the database
-
-```sql
-CREATE DATABASE one_to_many_demo;
+```json
+{
+  "timestamp": "2026-06-02T12:00:00.000Z",
+  "status": 400,
+  "error": "Validation Failed",
+  "messages": {
+    "department_name": "must not be blank",
+    "employees[0].email": "must be a well-formed email address"
+  }
+}
 ```
 
-### 2. Build the project
+- Database constraint violations (duplicates) return `409 Conflict` with a clear message.
 
-```powershell
-mvn clean install
-```
+## Swagger / OpenAPI
 
-### 3. Run the application
+- UI: `http://localhost:8080/swagger-ui.html`
+- JSON: `http://localhost:8080/v3/api-docs`
 
-```powershell
-mvn spring-boot:run
-```
+Swagger UI supports Basic Auth — use the `Authorize` button to supply credentials.
 
 ## Testing
 
-Test the APIs using:
+- Use Swagger UI to try endpoints interactively.
+- Use Postman or curl for automated requests.
 
-- Swagger UI
-- Postman
+Example curl (create department):
 
-## Expected Behavior
+```bash
+curl -u admin:admin123 -H "Content-Type: application/json" -d @dept.json \
+  http://localhost:8080/api/departments
+```
 
-- Duplicate department names return **409 Conflict**
-- Duplicate employee emails return **409 Conflict**
-- Validation errors return **400 Bad Request**
-- Missing resources return **404 Not Found**
-- Unauthorized access returns **403 Forbidden**
+## Logging
 
-## Notes
+- Logging is configured for the application. Look for logs from controller, service, and global exception handler to trace requests and errors.
 
-- Entities are not exposed directly from controller responses
-- Department deletion also removes associated employees
-- Logging is included in controller, service, and exception handler
+## Common Troubleshooting
 
+- MySQL connection errors: verify `spring.datasource.*` settings and that MySQL is running.
+- Port conflicts: change `server.port` in `application.properties`.
+- Package or class not found: ensure package root is `com.swabhav.demo` (refactor if necessary).
+
+## Deliverables & Grading Checklist
+
+- Department CRUD with employees: ✅
+- Pagination: ✅
+- DTO-based API: ✅
+- Validation & global exceptions: ✅
+- Role-based Basic Auth: ✅
+- Swagger documentation: ✅
+- Logging present: ✅
+
+If you need, I can also:
+
+- provide a Postman collection
+- add SQL seed data or a Flyway script
+- run a quick local smoke test (if you grant permission to run maven in this environment)
