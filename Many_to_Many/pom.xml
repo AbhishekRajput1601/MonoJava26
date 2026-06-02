@@ -8,11 +8,11 @@
         <version>4.0.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.swabhav</groupId>
-    <artifactId>Many_to_One</artifactId>
+    <groupId>org.abhishek</groupId>
+    <artifactId>Many_to_Many</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Many_to_One</name>
-    <description>Many_to_One</description>
+    <name>Many_to_Many</name>
+    <description>Many_to_Many</description>
     <url/>
     <licenses>
         <license/>
