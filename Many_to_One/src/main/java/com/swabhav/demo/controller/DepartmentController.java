@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/api/departments")
 @Slf4j
 @Tag(name = "Department Management", description = "APIs for managing departments and employees")
-@SecurityRequirement(name = "basicAuth")
+@SecurityRequirement(name = "bearerAuth")
 public class DepartmentController {
 
     @Autowired

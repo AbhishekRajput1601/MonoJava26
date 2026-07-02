@@ -4,7 +4,6 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.Components;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,12 +24,12 @@ public class OpenApiConfig {
                         )
                 )
                 .components(new Components()
-                        .addSecuritySchemes("basicAuth", new SecurityScheme()
+                        .addSecuritySchemes("bearerAuth", new SecurityScheme()
                                 .type(SecurityScheme.Type.HTTP)
-                                .scheme("basic")
-                                .description("HTTP Basic Authentication")
+                                .scheme("bearer")
+                                .bearerFormat("JWT")
+                                .description("JWT Bearer Authentication")
                         )
-                )
-                .addSecurityItem(new SecurityRequirement().addList("basicAuth"));
+                );
     }
 }
